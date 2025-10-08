@@ -40,8 +40,8 @@ It guides the user through each step with simple yes/no prompts, giving you full
 ## Licenses
 - **NA2FLAC** — Licensed under the MIT License (see `LICENSE`)
 - **FFmpeg / FFprobe** — Licensed under the GNU General Public License v3 (GPLv3)  
-  See `licenses/LICENSE_FFMPEG_GPLv3.txt` or visit [https://ffmpeg.org](https://ffmpeg.org/)
-- **VGMStream** — Licensed under the MIT License (see `licenses/LICENSE_VGMSTREAM.txt`)  
+  See `licenses/FFMPEG_COPYING.GPLv3.md` and `FFMPEG_LICENSE.md` or visit [https://ffmpeg.org](https://ffmpeg.org/)
+- **VGMStream** — Licensed under the MIT License (see `licenses/VGMSTREAM_COPYING.md`)  
   Visit [https://vgmstream.org](https://vgmstream.org/)
 
 ---
