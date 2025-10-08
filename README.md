@@ -9,7 +9,7 @@ It guides the user through each step with simple yes/no prompts, giving you full
 ## Features
 - **Interactive scanning and conversion**  
   - The program asks for confirmation before scanning, converting, and sorting, giving you full control.
-- **Supported formats**  
+- **Currently supported formats (as of v1.1)**  
   - `AST`, `BRSTM`, `BCSTM`, `BFSTM`, `BFWAV`, `BWAV`, `LOPUS`, `IDSP`, `HPS`, and `DSP`
 - **Intelligent channel handling**  
   - AST files split into `_l` (left) and `_r` (right) channels are automatically detected and merged into a single stereo track.
