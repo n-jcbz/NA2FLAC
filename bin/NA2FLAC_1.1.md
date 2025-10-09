@@ -183,7 +183,7 @@ for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.lopus *.idsp *.hps *.
       	  set /a converted+=1
    	 ) else (
    	     echo Conversion failed for "!file!.wav"
-   	     set /a wavKept+=1
+   	     set /a failed+=1
    	 )
 	) else (
 	  echo.
@@ -224,7 +224,7 @@ echo Conversion Summary
 echo =======================================
 echo Files converted (FLAC): %converted%
 echo Files kept as WAV (too many channels or merge failed): %wavKept%
-echo Failed: %displayFailed%
+echo Failed to convert: %displayFailed%
 echo Total time: %mins%m %secs%s
 echo =======================================
 echo.
