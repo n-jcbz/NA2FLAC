@@ -15,8 +15,7 @@ It guides the user through each step with simple yes/no prompts, giving you full
   - AST files split into `_l` (left) and `_r` (right) channels are automatically detected and merged into a single stereo track.
 - **Smart output format**  
   - Files with up to **8 channels** are converted to **FLAC**  
-  - Files with more than 8 channels are exported as **WAV**
-
+  - Files with more than 8 channels are exported as **WAV**                                                                                             
     *Some players may not be able to play files with more than 8 channels!*
 - **Organized output**  
   - Converted files are sorted into folders:  
