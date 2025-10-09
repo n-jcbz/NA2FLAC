@@ -322,6 +322,7 @@ set idspLeft=0
 set hpsLeft=0
 set dspLeft=0
 set adxLeft=0
+set customLeft=0
 
 for %%f in (*.flac) do set /a flacLeft+=1
 for %%f in (*.wav) do set /a wavLeft+=1
@@ -336,6 +337,7 @@ for %%f in (*.idsp) do set /a idspLeft+=1
 for %%f in (*.hps) do set /a hpsLeft+=1
 for %%f in (*.dsp) do set /a dspLeft+=1
 for %%f in (*.adx) do set /a adxLeft+=1
+for %%f in (*.custom) do set /a customLeft+=1
 
 echo.
 :: Only check if there were files of that type originally
