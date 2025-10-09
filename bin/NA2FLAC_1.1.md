@@ -1,17 +1,20 @@
-:: Here you'll find the original code of NA2FLAC v1.1
-
 @echo off
 setlocal enabledelayedexpansion
 cd /d "%~dp0%"
+
+:: ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
+:: YOU CAN REPLACE THEM WITH ANY ENCRYPTED AUDIO FORMAT TO TEST COMPATIBILITY.
+:: KEEP IN MIND CASE-SENSITIVITY! REPLACE "CUSTOM" AND "custom" ACCORDINGLY.
+:: IF YOU'RE CONTRIBUTING TO FORMAT SUPPORT: PLEASE RE-ADD THE CUSTOM PARTS UNDER/AFTER THE NEW FORMAT.
 
 :: tools
 set VGM=vgmstream-cli.exe
 set FFM=ffmpeg.exe
 set FFP=ffprobe.exe
 
-echo =======================================
-echo    Nintendo Audio to FLAC Converter
-echo =======================================
+echo ============================================
+echo    Nintendo Audio to FLAC Converter v1.1
+echo ============================================
 
 timeout /t 1 /nobreak >nul
 
@@ -54,16 +57,57 @@ if /i "%choice%"=="y" (
 echo Checking for files...
 timeout /t 2 /nobreak >nul
 
+:: Check for FLAC files
+dir /b *.flac >nul 2>&1
+if %errorlevel% equ 0 goto ask_sortFlac
+goto continue_workflow
+
+:ask_sortFlac
+set /p sortFlac="FLAC files detected. Sort them first? (y/n): "
+if /i "%sortFlac%"=="y" goto sortFlac
+goto continue_workflow
+
+:sortFlac
+set "flacdest=FLAC_Tracks"
+if not exist "%flacdest%" mkdir "%flacdest%"
+
+:: Count FLAC files before moving
+set flacLeft=0
+for %%f in (*.flac) do set /a flacLeft+=1
+
+if !flacLeft! equ 0 (
+    echo No FLAC files to move.
+) else (
+    move *.flac "%flacdest%" >nul 2>&1
+    timeout /t 1 /nobreak >nul
+    echo FLAC files moved to %flacdest%.
+)
+
+:: Instead of exit, just go back to workflow
+goto continue_workflow
+
+:continue_workflow
+timeout /t 1 /nobreak >nul
+echo Continuing with normal scan/conversion...
+
+timeout /t 1 /nobreak >nul
+
+echo Checking for files...
+timeout /t 2 /nobreak >nul
+
 set countAST=0
 set countBRSTM=0
 set countBCSTM=0
 set countBFSTM=0
 set countBFWAV=0
 set countBWAV=0
+set countSTRM=0
 set countLOPUS=0
 set countIDSP=0
 set countHPS=0
 set countDSP=0
+set countADX=0
+set countCUSTOM=0
 
 for %%f in (*.ast) do set /a countAST+=1
 for %%f in (*.brstm) do set /a countBRSTM+=1
@@ -71,17 +115,19 @@ for %%f in (*.bcstm) do set /a countBCSTM+=1
 for %%f in (*.bfstm) do set /a countBFSTM+=1
 for %%f in (*.bfwav) do set /a countBFWAV+=1
 for %%f in (*.bwav) do set /a countBWAV+=1
+for %%f in (*.strm) do set /a countSTRM+=1
 for %%f in (*.lopus) do set /a countLOPUS+=1
 for %%f in (*.idsp) do set /a countIDSP+=1
 for %%f in (*.hps) do set /a countHPS+=1
 for %%f in (*.dsp) do set /a countDSP+=1
-set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countLOPUS + countIDSP + countHPS + countDSP
+for %%f in (*.adx) do set /a countADX+=1
+for %%f in (*.custom) do set /a countCUSTOM+=1
+set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countSTRM + countLOPUS + countIDSP + countHPS + countDSP + countADX + countCUSTOM
 
-
-if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 (
+if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countSTRM%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 if %countADX%==0 if %countCUSTOM%==0 (
     echo No supported files found in this folder.
     echo Please move the executable into the folder containing your audio files and try again.
-    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, LOPUS, IDSP, HPS, DSP
+    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX
     pause
     exit
 )
@@ -92,10 +138,13 @@ if %countBCSTM% gtr 0 echo %countBCSTM% BCSTM files found^^!
 if %countBFSTM% gtr 0 echo %countBFSTM% BFSTM files found^^!
 if %countBFWAV% gtr 0 echo %countBFWAV% BFWAV files found^^!
 if %countBWAV% gtr 0 echo %countBWAV% BWAV files found^^!
+if %countSTRM% gtr 0 echo %countSTRM% STRM files found^^!
 if %countLOPUS% gtr 0 echo %countLOPUS% LOPUS files found^^!
 if %countIDSP% gtr 0 echo %countIDSP% IDSP files found^^!
 if %countHPS% gtr 0 echo %countHPS% HPS files found^^!
 if %countDSP% gtr 0 echo %countDSP% DSP files found^^!
+if %countADX% gtr 0 echo %countADX% ADX files found^^!
+if %countCUSTOM% gtr 0 echo %countCUSTOM% CUSTOM files found^^!
 echo ^(%totalFiles% files total^)
 
 timeout /t 1 /nobreak >nul
@@ -115,7 +164,7 @@ if /i "%choice%"=="y" (
     goto ask_convert
 )
 
-:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / LOPUS / IDSP / HPS / DSP) --------------------
+:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / STRM / LOPUS / IDSP / HPS / DSP / ADX / CUSTOM) --------------------
 
 set /a converted=0
 set /a failed=0
@@ -134,7 +183,7 @@ for %%x in (sh sm ss) do if "!%%x!"=="" set "%%x=0"
 set /a startSec=sh*3600 + sm*60 + ss
 
 :: Conversion loop
-for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.lopus *.idsp *.hps *.dsp) do (
+for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.strm *.lopus *.idsp *.hps *.dsp *.adx *.custom) do (
     set "file=%%~nf"
     echo Processing %%f...
 
@@ -175,7 +224,7 @@ for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.lopus *.idsp *.hps *.
       	  set /a converted+=1
    	 ) else (
    	     echo Conversion failed for "!file!.wav"
-   	     set /a wavKept+=1
+   	     set /a failed+=1
    	 )
 	) else (
 	  echo.
@@ -216,7 +265,7 @@ echo Conversion Summary
 echo =======================================
 echo Files converted (FLAC): %converted%
 echo Files kept as WAV (too many channels or merge failed): %wavKept%
-echo Failed: %displayFailed%
+echo Failed to convert: %displayFailed%
 echo Total time: %mins%m %secs%s
 echo =======================================
 echo.
@@ -239,6 +288,8 @@ if /i "%choice%"=="y" (
 )
 
 :: ------------------- Sorting --------------------
+
+:sorting
 set "flacdest=FLAC_Tracks"
 if not exist "%flacdest%" mkdir "%flacdest%"
 move *.flac "%flacdest%" >nul 2>&1
@@ -268,18 +319,27 @@ if %countBFWAV% gtr 0 (
     if not exist "BFWAV_Tracks" mkdir "BFWAV_Tracks"
     move *.bfwav "BFWAV_Tracks" >nul 2>&1
 )
+
 if %countBWAV% gtr 0 (
     if not exist "BWAV_Tracks" mkdir "BWAV_Tracks"
     move *.bwav "BWAV_Tracks" >nul 2>&1
 )
+
+if %countSTRM% gtr 0 (
+    if not exist "STRM_Tracks" mkdir "STRM_Tracks"
+    move *.strm "STRM_Tracks" >nul 2>&1
+)
+
 if %countLOPUS% gtr 0 (
     if not exist "LOPUS_Tracks" mkdir "LOPUS_Tracks"
     move *.lopus "LOPUS_Tracks" >nul 2>&1
 )
+
 if %countIDSP% gtr 0 (
     if not exist "IDSP_Tracks" mkdir "IDSP_Tracks"
     move *.idsp "IDSP_Tracks" >nul 2>&1
 )
+
 if %countHPS% gtr 0 (
     if not exist "HPS_Tracks" mkdir "HPS_Tracks"
     move *.hps "HPS_Tracks" >nul 2>&1
@@ -290,31 +350,48 @@ if %countDSP% gtr 0 (
     move *.dsp "DSP_Tracks" >nul 2>&1
 )
 
+if %countADX% gtr 0 (
+    if not exist "ADX_Tracks" mkdir "ADX_Tracks"
+    move *.adx "ADX_Tracks" >nul 2>&1
+)
+
+if %countCUSTOM% gtr 0 (
+    if not exist "CUSTOM_Tracks" mkdir "CUSTOM_Tracks"
+    move *.custom "CUSTOM_Tracks" >nul 2>&1
+)
+
 :: check files
 set flacLeft=0
+:: set wavLeft=0
 set astLeft=0
 set brstmLeft=0
 set bcstmLeft=0
 set bfstmLeft=0
 set bfwavLeft=0
 set bwavLeft=0
+set strmLeft=0
 set lopusLeft=0
 set idspLeft=0
 set hpsLeft=0
 set dspLeft=0
+set adxLeft=0
+set customLeft=0
 
 for %%f in (*.flac) do set /a flacLeft+=1
-for %%f in (*.wav) do set /a flacLeft+=1
+:: for %%f in (*.wav) do set /a wavLeft+=1
 for %%f in (*.ast) do set /a astLeft+=1
 for %%f in (*.brstm) do set /a brstmLeft+=1
 for %%f in (*.bcstm) do set /a bcstmLeft+=1
 for %%f in (*.bfstm) do set /a bfstmLeft+=1
 for %%f in (*.bfwav) do set /a bfwavLeft+=1
 for %%f in (*.bwav) do set /a bwavLeft+=1
+for %%f in (*.strm) do set /a strmLeft+=1
 for %%f in (*.lopus) do set /a lopusLeft+=1
 for %%f in (*.idsp) do set /a idspLeft+=1
 for %%f in (*.hps) do set /a hpsLeft+=1
 for %%f in (*.dsp) do set /a dspLeft+=1
+for %%f in (*.adx) do set /a adxLeft+=1
+for %%f in (*.custom) do set /a customLeft+=1
 
 echo.
 :: Only check if there were files of that type originally
@@ -366,6 +443,14 @@ if %countBWAV% gtr 0 (
     )
 )
 
+if %countSTRM% gtr 0 (
+    if !strmLeft! equ 0 (
+	echo All original STRM files moved.
+    ) else (
+	echo Couldn't move all original STRM files.
+    )
+)
+
 if %countLOPUS% gtr 0 (
     if !lopusLeft! equ 0 (
         echo All original LOPUS files moved.
@@ -398,12 +483,35 @@ if %countDSP% gtr 0 (
     )
 )
 
+if %countADX% gtr 0 (
+    if !adxLeft! equ 0 (
+	echo All original ADX files moved.
+    ) else (
+	echo Couldn't move all original ADX files.
+    )
+)
+
+if %countCUSTOM% gtr 0 (
+    if !customLeft! equ 0 (
+	echo All original CUSTOM files moved.
+    ) else (
+	echo Couldn't move all original CUSTOM files.
+    )
+)
+
 if !flacLeft! equ 0 (
     echo All FLAC/WAV files moved.
 ) else (
         echo Couldn't move all FLAC/WAV files.
     )
 )
+
+::  if !wavLeft! equ 0 (
+::    echo All WAV files moved into "%flacdest%".
+:: ) else (
+::         echo Couldn't move all WAV files.
+::    )
+:: )
 
 timeout /t 1 /nobreak >nul
 
