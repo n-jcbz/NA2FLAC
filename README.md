@@ -16,7 +16,8 @@ It guides the user through each step with simple yes/no prompts, giving you full
 - **Smart output format**  
   - Files with up to **8 channels** are converted to **FLAC**  
   - Files with more than 8 channels are exported as **WAV**
-   *Some players may not be able to play files with more than 8 channels!*
+
+    *Some players may not be able to play files with more than 8 channels!*
 - **Organized output**  
   - Converted files are sorted into folders:  
     `FLAC_Tracks`, `AST_Tracks`, `BRSTM_Tracks`, `BCSTM_Tracks`, etc.  
