@@ -57,6 +57,44 @@ if /i "%choice%"=="y" (
 echo Checking for files...
 timeout /t 2 /nobreak >nul
 
+:: Check for FLAC files
+dir /b *.flac >nul 2>&1
+if %errorlevel% equ 0 goto ask_sortFlac
+goto continue_workflow
+
+:ask_sortFlac
+set /p sortFlac="FLAC files detected. Sort them first? (y/n): "
+if /i "%sortFlac%"=="y" goto sortFlac
+goto continue_workflow
+
+:sortFlac
+set "flacdest=FLAC_Tracks"
+if not exist "%flacdest%" mkdir "%flacdest%"
+
+:: Count FLAC files before moving
+set flacLeft=0
+for %%f in (*.flac) do set /a flacLeft+=1
+
+if !flacLeft! equ 0 (
+    echo No FLAC files to move.
+) else (
+    move *.flac "%flacdest%" >nul 2>&1
+    timeout /t 1 /nobreak >nul
+    echo FLAC files moved to %flacdest%.
+)
+
+:: Instead of exit, just go back to workflow
+goto continue_workflow
+
+:continue_workflow
+timeout /t 1 /nobreak >nul
+echo Continuing with normal scan/conversion...
+
+timeout /t 1 /nobreak >nul
+
+echo Checking for files...
+timeout /t 2 /nobreak >nul
+
 set countAST=0
 set countBRSTM=0
 set countBCSTM=0
@@ -89,7 +127,7 @@ set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV +
 if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countSTRM%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 if %countADX%==0 if %countCUSTOM%==0 (
     echo No supported files found in this folder.
     echo Please move the executable into the folder containing your audio files and try again.
-    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, CUSTOM
+    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX
     pause
     exit
 )
@@ -250,6 +288,8 @@ if /i "%choice%"=="y" (
 )
 
 :: ------------------- Sorting --------------------
+
+:sorting
 set "flacdest=FLAC_Tracks"
 if not exist "%flacdest%" mkdir "%flacdest%"
 move *.flac "%flacdest%" >nul 2>&1
