@@ -60,7 +60,7 @@ timeout /t 2 /nobreak >nul
 :: Check for FLAC files
 dir /b *.flac >nul 2>&1
 if %errorlevel% equ 0 goto ask_sortFlac
-goto continue_workflow
+goto flac_skip
 
 :ask_sortFlac
 set /p sortFlac="FLAC files detected. Sort them first? (y/n): "
@@ -92,8 +92,7 @@ echo Continuing with normal scan/conversion...
 
 timeout /t 1 /nobreak >nul
 
-echo Checking for files...
-timeout /t 2 /nobreak >nul
+:flac_skip
 
 set countAST=0
 set countBRSTM=0
