@@ -49,5 +49,6 @@ It guides the user through each step with simple yes/no prompts, giving you full
 
 ## Credits
 - FFmpeg and FFprobe by the FFmpeg developers  
-- VGMStream by the VGMStream team  
+- VGMStream by the VGMStream team
+- Compiled using BatToExe Portable by Makazzz (MIT License) — [https://github.com/Makazzz/BatToExePortable](https://github.com/Makazzz/BatToExePortable)
 - NA2FLAC by n.jcbz
