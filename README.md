@@ -39,16 +39,18 @@ It guides the user through each step with simple yes/no prompts, giving you full
 ---
 
 ## Licenses
-- **NA2FLAC** — Licensed under the MIT License (see `LICENSE`)
+- **NA2FLAC** — Licensed under the MIT License (see `LICENSE.txt`)
 - **FFmpeg / FFprobe** — Licensed under the GNU General Public License v3 (GPLv3)  
   See `licenses/FFMPEG_COPYING.GPLv3.md` and `FFMPEG_LICENSE.md` or visit [https://ffmpeg.org](https://ffmpeg.org/)
 - **VGMStream** — Licensed under the MIT License (see `licenses/VGMSTREAM_COPYING.md`)  
   Visit [https://vgmstream.org](https://vgmstream.org/)
+- **BatToExe Portable** — Licensed under the MIT License (see `licenses/BatToExePortable_LICENSE.md`)                                                                                                 
+  Visit [https://github.com/Makazzz/BatToExePortable](https://github.com/Makazzz/BatToExePortable)
 
 ---
 
 ## Credits
 - FFmpeg and FFprobe by the FFmpeg developers  
 - VGMStream by the VGMStream team
-- Compiled using BatToExe Portable by Makazzz (MIT License) — [https://github.com/Makazzz/BatToExePortable](https://github.com/Makazzz/BatToExePortable)
+- Compiled using BatToExe Portable by Makazzz
 - NA2FLAC by n.jcbz
