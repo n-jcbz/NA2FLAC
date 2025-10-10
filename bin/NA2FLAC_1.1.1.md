@@ -2,6 +2,8 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0%"
 
+:: BUILD TYPE: STABLE
+
 :: ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
 :: YOU CAN REPLACE THEM WITH ANY ENCRYPTED AUDIO FORMAT TO TEST COMPATIBILITY.
 :: KEEP IN MIND CASE-SENSITIVITY! REPLACE "CUSTOM" AND "custom" ACCORDINGLY.
@@ -500,19 +502,19 @@ if %countADX% gtr 0 (
     )
 )
 
-if %countCUSTOM% gtr 0 (
-    if !customLeft! equ 0 (
-	echo All original CUSTOM files moved.
-    ) else (
-	echo Couldn't move all original CUSTOM files.
-    )
-)
-
 if %countMPT% gtr 0 (
     if !mptLeft! equ 0 (
 	echo All original MP3 files moved.
     ) else (
 	echo Couldn't move all original MP3 files.
+    )
+)
+
+if %countCUSTOM% gtr 0 (
+    if !customLeft! equ 0 (
+	echo All original CUSTOM files moved.
+    ) else (
+	echo Couldn't move all original CUSTOM files.
     )
 )
 

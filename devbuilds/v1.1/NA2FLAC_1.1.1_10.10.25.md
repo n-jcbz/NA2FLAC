@@ -108,6 +108,7 @@ set countIDSP=0
 set countHPS=0
 set countDSP=0
 set countADX=0
+set countMPT=0
 set countCUSTOM=0
 
 for %%f in (*.ast) do set /a countAST+=1
@@ -122,13 +123,14 @@ for %%f in (*.idsp) do set /a countIDSP+=1
 for %%f in (*.hps) do set /a countHPS+=1
 for %%f in (*.dsp) do set /a countDSP+=1
 for %%f in (*.adx) do set /a countADX+=1
+for %%f in (*.mp3) do set /a countMPT+=1
 for %%f in (*.custom) do set /a countCUSTOM+=1
-set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countSTRM + countLOPUS + countIDSP + countHPS + countDSP + countADX + countCUSTOM
+set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countSTRM + countLOPUS + countIDSP + countHPS + countDSP + countADX + countMPT + countCUSTOM
 
 if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countSTRM%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 if %countADX%==0 if %countCUSTOM%==0 (
     echo No supported files found in this folder.
     echo Please move the executable into the folder containing your audio files and try again.
-    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX
+    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, MP3
     pause
     exit
 )
@@ -145,6 +147,7 @@ if %countIDSP% gtr 0 echo %countIDSP% IDSP files found^^!
 if %countHPS% gtr 0 echo %countHPS% HPS files found^^!
 if %countDSP% gtr 0 echo %countDSP% DSP files found^^!
 if %countADX% gtr 0 echo %countADX% ADX files found^^!
+if %countMPT% gtr 0 echo %countMPT% MP3 files found^^!
 if %countCUSTOM% gtr 0 echo %countCUSTOM% CUSTOM files found^^!
 echo ^(%totalFiles% files total^)
 
@@ -165,7 +168,7 @@ if /i "%choice%"=="y" (
     goto ask_convert
 )
 
-:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / STRM / LOPUS / IDSP / HPS / DSP / ADX / CUSTOM) --------------------
+:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / STRM / LOPUS / IDSP / HPS / DSP / ADX / MP3 / CUSTOM) --------------------
 
 set /a converted=0
 set /a failed=0
@@ -184,7 +187,7 @@ for %%x in (sh sm ss) do if "!%%x!"=="" set "%%x=0"
 set /a startSec=sh*3600 + sm*60 + ss
 
 :: Conversion loop
-for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.strm *.lopus *.idsp *.hps *.dsp *.adx *.custom) do (
+for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.strm *.lopus *.idsp *.hps *.dsp *.adx *.mp3 *.custom) do (
     set "file=%%~nf"
     echo Processing %%f...
 
@@ -356,6 +359,11 @@ if %countADX% gtr 0 (
     move *.adx "ADX_Tracks" >nul 2>&1
 )
 
+if %countMPT% gtr 0 (
+    if not exist "MP3_Tracks" mkdir "MP3_Tracks"
+    move *.mp3 "MP3_Tracks" >nul 2>&1
+)
+
 if %countCUSTOM% gtr 0 (
     if not exist "CUSTOM_Tracks" mkdir "CUSTOM_Tracks"
     move *.custom "CUSTOM_Tracks" >nul 2>&1
@@ -376,6 +384,7 @@ set idspLeft=0
 set hpsLeft=0
 set dspLeft=0
 set adxLeft=0
+set mptLeft=0
 set customLeft=0
 
 for %%f in (*.flac) do set /a flacLeft+=1
@@ -392,6 +401,7 @@ for %%f in (*.idsp) do set /a idspLeft+=1
 for %%f in (*.hps) do set /a hpsLeft+=1
 for %%f in (*.dsp) do set /a dspLeft+=1
 for %%f in (*.adx) do set /a adxLeft+=1
+for %%f in (*.mp3) do set /a mptLeft+=1
 for %%f in (*.custom) do set /a customLeft+=1
 
 echo.
@@ -489,6 +499,14 @@ if %countADX% gtr 0 (
 	echo All original ADX files moved.
     ) else (
 	echo Couldn't move all original ADX files.
+    )
+)
+
+if %countMPT% gtr 0 (
+    if !mptLeft! equ 0 (
+	echo All original MP3 files moved.
+    ) else (
+	echo Couldn't move all original MP3 files.
     )
 )
 
