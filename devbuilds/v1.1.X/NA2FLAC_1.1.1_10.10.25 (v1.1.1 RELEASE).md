@@ -24,7 +24,7 @@ timeout /t 1 /nobreak >nul
 set "missingDeps="
 
 :: List all required files for vgmstream + ffmpeg + ffprobe
-set "requiredFiles=vgmstream-cli.exe ffmpeg.exe ffprobe.exe avcodec-vgmstream-59.dll avformat-vgmstream-59.dll avutil-vgmstream-57.dll libatrac9.dll libcelt-0061.dll libcelt-0110.dll libg719_decode.dll libmpg123-0.dll libspeex-1.dll swresample-vgmstream-4.dll"
+set "requiredFiles=vgmstream-cli.exe ffmpeg.exe ffprobe.exe avcodec-vgmstream-59.dll avformat-vgmstream-59.dll avutil-vgmstream-57.dll libatrac9.dll libcelt-0061.dll libcelt-0110.dll libg719_decode.dll libmpg123-0.dll libspeex-1.dll libvorbis.dll swresample-vgmstream-4.dll"
 
 for %%f in (%requiredFiles%) do (
     if not exist "%%f" set "missingDeps=!missingDeps!%%f, "
@@ -36,6 +36,24 @@ if defined missingDeps set "missingDeps=!missingDeps:~0,-2!"
 if defined missingDeps (
     echo Warning: The following required files are missing: !missingDeps!
     echo Please make sure all files extracted by the exe are in the same folder.
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
     pause
     exit
 )
@@ -47,6 +65,24 @@ if /i "%choice%"=="y" (
     timeout /t 1 /nobreak >nul
 ) else if /i "%choice%"=="n" (
     echo Process cancelled by user. Closing in 5 seconds.
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
     timeout /t 5 /nobreak >nul
     exit
 ) else (
@@ -131,6 +167,24 @@ if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %co
     echo No supported files found in this folder.
     echo Please move the executable into the folder containing your audio files and try again.
     echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, MP3
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
     pause
     exit
 )
@@ -161,6 +215,24 @@ if /i "%choice%"=="y" (
     timeout /t 5 /nobreak >nul
 ) else if /i "%choice%"=="n" (
     echo Process cancelled by user. Closing in 5 seconds.
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
     timeout /t 5 /nobreak >nul
     exit
 ) else (
@@ -261,14 +333,16 @@ set /a secs=totalSec%%60
 
 :: Display
 set "displayFailed=!failed!"
+set "dspWavKept=!wavKept!"
 if !failed! lss 1 set "displayFailed=None"
+if !wavKept! lss 1 set "dspWavKept=None"
 
 echo.
 echo =======================================
 echo Conversion Summary
 echo =======================================
 echo Files converted (FLAC): %converted%
-echo Files kept as WAV (too many channels or merge failed): %wavKept%
+echo Files kept as WAV (too many channels or merge failed): %dspWavKept%
 echo Failed to convert: %displayFailed%
 echo Total time: %mins%m %secs%s
 echo =======================================
@@ -284,7 +358,25 @@ if /i "%choice%"=="y" (
 	timeout /t 1 /nobreak >nul
 ) else if /i "%choice%"=="n" (
 	echo Process cancelled by user. This window will close automatically in 5 seconds.
-	timeout /t 5 /nobreak >nul
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
+    timeout /t 5 /nobreak >nul
 	exit
 ) else (
 	echo Please type y or n.
@@ -523,18 +615,35 @@ if !flacLeft! equ 0 (
 ) else (
         echo Couldn't move all FLAC/WAV files.
     )
-)
 
 ::  if !wavLeft! equ 0 (
 ::    echo All WAV files moved into "%flacdest%".
 :: ) else (
 ::         echo Couldn't move all WAV files.
 ::    )
-:: )
 
 timeout /t 1 /nobreak >nul
 
 echo Sorting complete.
+
+del /Q "vgmstream-cli.exe" >nul 2>&1
+del /Q "ffmpeg.exe" >nul 2>&1
+del /Q "ffprobe.exe" >nul 2>&1
+del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+del /Q "libatrac9.dll" >nul 2>&1
+del /Q "libcelt-0061.dll" >nul 2>&1
+del /Q "libcelt-0110.dll" >nul 2>&1
+del /Q "libg719_decode.dll" >nul 2>&1
+del /Q "libmpg123-0.dll" >nul 2>&1
+del /Q "libspeex-1.dll" >nul 2>&1
+del /Q "libvorbis.dll" >nul 2>&1
+del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+del /Q "README.md" >nul 2>&1
+del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+del /Q "CONTRIBUTING.md" >nul 2>&1
+del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
 
 timeout /t 1 /nobreak >nul
 
