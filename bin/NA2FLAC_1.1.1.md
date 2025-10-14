@@ -14,9 +14,9 @@ set VGM=vgmstream-cli.exe
 set FFM=ffmpeg.exe
 set FFP=ffprobe.exe
 
-echo ============================================
-echo    Nintendo Audio to FLAC Converter v1.1
-echo ============================================
+echo =============================================
+echo    Nintendo Audio to FLAC Converter v1.1.1
+echo =============================================
 
 timeout /t 1 /nobreak >nul
 
