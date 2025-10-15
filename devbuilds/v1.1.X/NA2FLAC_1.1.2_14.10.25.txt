@@ -62,7 +62,6 @@ if not exist "NA2FLAC LICENSES" mkdir "NA2FLAC LICENSES"
 
 for %%L in ("BatToExePortable_LICENSE.md" "FFMPEG_COPYING.GPLv3.md" "FFMPEG_LICENSE.md" "VGMSTREAM_COPYING.md" "LICENSE.txt") do move "%%L" "NA2FLAC LICENSES" >nul 2>&1
 
-
 :: -------------------- Prompt --------------------
 :ask_scan
 set /p choice=Start scan? (y/n): 
@@ -359,8 +358,9 @@ echo Total time: %mins%m %secs%s
 echo =======================================
 echo.
 
-:: delay
 timeout /t 1 /nobreak >nul
+
+:: --------------------------------- Sorting Prompt ---------------------------------
 
 :ask_sort
 if !wavKept! lss 1 (
@@ -425,6 +425,7 @@ if /i "%choice%"=="y" (
 	echo Please type y or n.
 	goto ask_sort
 )
+    )
 
 :: ------------------- Sorting --------------------
 
