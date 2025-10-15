@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0%"
 
-:: BUILD TYPE: STABLE
+:: BUILD TYPE: UNSTABLE/NOT TESTED. USAGE IS NOT RECOMMENDED.
 
 :: ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
 :: YOU CAN REPLACE THEM WITH ANY PROPRIETARY AUDIO FORMAT TO TEST COMPATIBILITY.
@@ -15,7 +15,7 @@ set FFM=ffmpeg.exe
 set FFP=ffprobe.exe
 
 echo =============================================
-echo    Nintendo Audio to FLAC Converter v1.1.1
+echo    Nintendo Audio to FLAC Converter v1.1.2
 echo =============================================
 
 timeout /t 1 /nobreak >nul
@@ -151,6 +151,7 @@ set countHPS=0
 set countDSP=0
 set countADX=0
 set countMPT=0
+set countOGG=0
 set countCUSTOM=0
 
 for %%f in (*.ast) do set /a countAST+=1
@@ -167,13 +168,14 @@ for %%f in (*.hps) do set /a countHPS+=1
 for %%f in (*.dsp) do set /a countDSP+=1
 for %%f in (*.adx) do set /a countADX+=1
 for %%f in (*.mp3) do set /a countMPT+=1
+for %%f in (*.ogg) do set /a countOGG+=1
 for %%f in (*.custom) do set /a countCUSTOM+=1
-set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countSWAV + countSTRM + countLOPUS + countIDSP + countHPS + countDSP + countADX + countMPT + countCUSTOM
+set /a totalFiles=countAST + countBRSTM + countBCSTM + countBFSTM + countBFWAV + countBWAV + countSWAV + countSTRM + countLOPUS + countIDSP + countHPS + countDSP + countADX + countMPT + countOGG + countCUSTOM
 
-if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countSWAV%==0 if %countSTRM%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 if %countADX%==0 if %countCUSTOM%==0 (
+if %countAST%==0 if %countBRSTM%==0 if %countBCSTM%==0 if %countBFSTM%==0 if %countBFWAV%==0 if %countBWAV%==0 if %countSWAV%==0 if %countSTRM%==0 if %countLOPUS%==0 if %countIDSP%==0 if %countHPS%==0 if %countDSP%==0 if %countADX%==0 if %countMPT%==0 if %countOGG%==0 if %countCUSTOM%==0 (
     echo No supported files found in this folder.
     echo Please move the executable into the folder containing your audio files and try again.
-    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, SWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, MP3
+    echo Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, SWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, MP3, OGG
     del /Q "vgmstream-cli.exe" >nul 2>&1
     del /Q "ffmpeg.exe" >nul 2>&1
     del /Q "ffprobe.exe" >nul 2>&1
@@ -210,6 +212,7 @@ if %countHPS% gtr 0 echo %countHPS% HPS files found^^!
 if %countDSP% gtr 0 echo %countDSP% DSP files found^^!
 if %countADX% gtr 0 echo %countADX% ADX files found^^!
 if %countMPT% gtr 0 echo %countMPT% MP3 files found^^!
+if %countOGG% gtr 0 echo %countOGG% OGG files found^^!
 if %countCUSTOM% gtr 0 echo %countCUSTOM% CUSTOM files found^^!
 echo ^(%totalFiles% files total^)
 
@@ -248,7 +251,7 @@ if /i "%choice%"=="y" (
     goto ask_convert
 )
 
-:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / SWAV / STRM / LOPUS / IDSP / HPS / DSP / ADX / MP3 / CUSTOM) --------------------
+:: -------------------- Conversion (AST / BRSTM / BCSTM / BFSTM / BFWAV / BWAV / SWAV / STRM / LOPUS / IDSP / HPS / DSP / ADX / MP3 / OGG / CUSTOM) --------------------
 
 set /a converted=0
 set /a failed=0
@@ -267,7 +270,7 @@ for %%x in (sh sm ss) do if "!%%x!"=="" set "%%x=0"
 set /a startSec=sh*3600 + sm*60 + ss
 
 :: Conversion loop
-for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.swav *.strm *.lopus *.idsp *.hps *.dsp *.adx *.mp3 *.custom) do (
+for %%f in (*.ast *.brstm *.bcstm *.bfstm *.bfwav *.bwav *.swav *.strm *.lopus *.idsp *.hps *.dsp *.adx *.mp3 *.ogg *.custom) do (
     set "file=%%~nf"
     echo Processing %%f...
 
@@ -360,6 +363,38 @@ echo.
 timeout /t 1 /nobreak >nul
 
 :ask_sort
+if !wavKept! lss 1 (
+set /p choice=Sort files? (y/n): 
+if /i "%choice%"=="y" (
+	echo Sorting...
+	timeout /t 1 /nobreak >nul
+) else if /i "%choice%"=="n" (
+	echo Process cancelled by user. This window will close automatically in 5 seconds.
+    del /Q "vgmstream-cli.exe" >nul 2>&1
+    del /Q "ffmpeg.exe" >nul 2>&1
+    del /Q "ffprobe.exe" >nul 2>&1
+    del /Q "avcodec-vgmstream-59.dll" >nul 2>&1
+    del /Q "avformat-vgmstream-59.dll" >nul 2>&1
+    del /Q "avutil-vgmstream-57.dll" >nul 2>&1
+    del /Q "libatrac9.dll" >nul 2>&1
+    del /Q "libcelt-0061.dll" >nul 2>&1
+    del /Q "libcelt-0110.dll" >nul 2>&1
+    del /Q "libg719_decode.dll" >nul 2>&1
+    del /Q "libmpg123-0.dll" >nul 2>&1
+    del /Q "libspeex-1.dll" >nul 2>&1
+    del /Q "libvorbis.dll" >nul 2>&1
+    del /Q "swresample-vgmstream-4.dll" >nul 2>&1
+    del /Q "README.md" >nul 2>&1
+    del /Q "NA2FLAC_1.1.1.md" >nul 2>&1
+    del /Q "CONTRIBUTING.md" >nul 2>&1
+    del /Q "CODE_OF_CONDUCT.md" >nul 2>&1
+    timeout /t 5 /nobreak >nul
+	exit
+) else (
+	echo Please type y or n.
+	goto ask_sort
+)
+    ) else (
 set /p choice=Sort files? Leftover WAV files will be sorted into the same folder as FLAC files. (y/n): 
 if /i "%choice%"=="y" (
 	echo Sorting...
@@ -469,6 +504,11 @@ if %countMPT% gtr 0 (
     move *.mp3 "MP3_Tracks" >nul 2>&1
 )
 
+if %countOGG% gtr 0 (
+    if not exist "OGG_Tracks" mkdir "OGG_Tracks"
+    move *.ogg "OGG_Tracks" >nul 2>&1
+)
+
 if %countCUSTOM% gtr 0 (
     if not exist "CUSTOM_Tracks" mkdir "CUSTOM_Tracks"
     move *.custom "CUSTOM_Tracks" >nul 2>&1
@@ -491,6 +531,7 @@ set hpsLeft=0
 set dspLeft=0
 set adxLeft=0
 set mptLeft=0
+set oggLeft=0
 set customLeft=0
 
 for %%f in (*.flac) do set /a flacLeft+=1
@@ -509,6 +550,7 @@ for %%f in (*.hps) do set /a hpsLeft+=1
 for %%f in (*.dsp) do set /a dspLeft+=1
 for %%f in (*.adx) do set /a adxLeft+=1
 for %%f in (*.mp3) do set /a mptLeft+=1
+for %%f in (*.ogg) do set /a oggLeft+=1
 for %%f in (*.custom) do set /a customLeft+=1
 
 echo.
@@ -622,6 +664,14 @@ if %countMPT% gtr 0 (
 	echo All original MP3 files moved.
     ) else (
 	echo Couldn't move all original MP3 files.
+    )
+)
+
+if %countOGG% gtr 0 (
+    if !oggLeft! equ 0 (
+	echo All original OGG files moved.
+    ) else (
+	echo Couldn't move all original OGG files.
     )
 )
 
