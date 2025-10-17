@@ -24,7 +24,7 @@ It guides the user through each step with simple yes/no prompts, giving you full
     *Some players may not be able to play files with more than 8 channels!*
 
 - **Organized output with full folder tree**
-  - Converted files are copied into a mirrored folder structure starting from the folder where `NA2FLAC_v1.2_x64.exe` is launched.
+  - Converted files are copied into a mirrored folder structure starting from the folder where `NA2FLAC_1.2_x64.exe` is launched.
   - Relative paths are preserved, so all subfolders and file organization remain intact.
 
 - **Dedicated tools & license folders**
