@@ -39,7 +39,7 @@ It guides the user through each step with simple yes/no prompts, giving you full
 
 ## How It Works
 
-1. Place the **installer** (`NA2FLAC_Installer.exe`) in the folder that contains your audio files or subfolders.  
+1. Place the **installer** (`NA2FLAC_1.2.1_Installer.exe`) in the folder that contains your audio files or subfolders.  
 2. Run the installer — it will extract all necessary files into the same location.  
 3. Run `NA2FLAC_1.2.1_x64.exe`.  
 4. Follow the on-screen prompts (`y/n`) to scan and convert supported files.  
