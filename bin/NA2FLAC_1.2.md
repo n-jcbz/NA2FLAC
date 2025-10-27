@@ -258,5 +258,3 @@ echo =======================================
 echo.
 
 pause
-
-start "" cmd /c "move "%~f0" "%cd%\NA2FLAC\" >nul 2>&1"
