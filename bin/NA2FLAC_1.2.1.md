@@ -9,24 +9,22 @@ cd /d "%~dp0%"
 :: KEEP IN MIND CASE-SENSITIVITY! REPLACE "CUSTOM" AND "custom" ACCORDINGLY.
 :: IF YOU'RE CONTRIBUTING TO FORMAT SUPPORT: PLEASE RE-ADD THE CUSTOM PARTS UNDER/AFTER THE NEW FORMAT.
 
-timeout /t 2 /nobreak >nul
-
 :: dependency & license sorting
 set "depDir=%~dp0NA2FLAC"
 set "licenseDir=%depDir%\licenses"
 if not exist "%depDir%" mkdir "%depDir%"
 if not exist "%licenseDir%" mkdir "%licenseDir%"
 
-for %%F in ("vgmstream-cli.exe" "ffmpeg.exe" "ffprobe.exe" "avcodec-vgmstream-59.dll" "avformat-vgmstream-59.dll" "avutil-vgmstream-57.dll" "libatrac9.dll" "libcelt-0061.dll" "libcelt-0110.dll" "libg719_decode.dll" "libmpg123-0.dll" "libspeex-1.dll" "libvorbis.dll" "swresample-vgmstream-4.dll" "NA2FLAC_1.2.md" "CODE_OF_CONDUCT.md" "CONTRIBUTING.md" "README.md") do move "%%F" "%depDir%" >nul 2>&1
-for %%L in ("BatToExePortable_LICENSE.md" "FFMPEG_COPYING.GPLv3.md" "FFMPEG_LICENSE.md" "VGMSTREAM_COPYING.md" "LICENSE.txt") do move "%%L" "%licenseDir%" >nul 2>&1
+for %%F in ("vgmstream-cli.exe" "ffmpeg.exe" "ffprobe.exe" "NA2FLAC_Installer.exe" "avcodec-vgmstream-59.dll" "avformat-vgmstream-59.dll" "avutil-vgmstream-57.dll" "libatrac9.dll" "libcelt-0061.dll" "libcelt-0110.dll" "libg719_decode.dll" "libmpg123-0.dll" "libspeex-1.dll" "libvorbis.dll" "swresample-vgmstream-4.dll" "NA2FLAC_1.2.1.md" "CODE_OF_CONDUCT.md" "CONTRIBUTING.md" "README.md") do move "%%F" "%depDir%" >nul 2>&1
+for %%L in ("BatToExePortable_LICENSE.md" "FFMPEG_COPYING.GPLv3.md" "FFMPEG_LICENSE.md" "VGMSTREAM_COPYING.md" "LICENSE.txt" "NSIS_COPYING.md") do move "%%L" "%licenseDir%" >nul 2>&1
 
 set "VGM=%depDir%\vgmstream-cli.exe"
 set "FFM=%depDir%\ffmpeg.exe"
 set "FFP=%depDir%\ffprobe.exe"
 
-echo ============================================
-echo    Nintendo Audio to FLAC Converter v1.2
-echo ============================================
+echo =============================================
+echo    Nintendo Audio to FLAC Converter v1.2.1
+echo =============================================
 
 timeout /t 1 /nobreak >nul
 
