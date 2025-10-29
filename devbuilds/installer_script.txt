@@ -1,0 +1,70 @@
+; ===============================================
+; NSIS Installer for Nintendo Audio to FLAC v2.0
+; Drops all files into the current folder and optionally runs the converter
+; ===============================================
+
+!include "MUI2.nsh"
+
+; Installer properties
+Name "NA2FLAC v2.0 Installer (Legacy)"
+OutFile "NA2FLAC_2.0_legacy_Installer.exe"
+InstallDir "$EXEDIR"   ; Extract to the folder where installer is run
+RequestExecutionLevel user
+
+; Modern UI
+!define MUI_ABORTWARNING
+!define MUI_ICON "icon.ico"
+!define MUI_UNICON "icon.ico"
+
+; Welcome page customization
+!define MUI_WELCOMEPAGE_TEXT "Install NA2FLAC?" ; text at top of Welcome page
+!insertmacro MUI_PAGE_WELCOME
+
+; Install files page
+!insertmacro MUI_PAGE_INSTFILES
+
+; Finish page with "Run NA2FLAC" checkbox
+!define MUI_FINISHPAGE_RUN "$EXEDIR\NA2FLAC_2.0_legacy.exe"
+!define MUI_FINISHPAGE_RUN_TEXT "Run NA2FLAC after installation"
+!insertmacro MUI_PAGE_FINISH
+
+; Section to extract all files
+Section "Extract Files"
+
+  SetOutPath "$EXEDIR"
+
+  ; Main executables
+  File "vgmstream-cli.exe"
+  File "ffmpeg.exe"
+  File "ffprobe.exe"
+  File "NA2FLAC_2.0_legacy.exe"
+
+  ; DLLs and dependencies
+  File "NA2FLAC_2.0_legacy.runtimeconfig.json"
+  File "NA2FLAC_2.0_legacy.deps.json"
+  File "NA2FLAC_2.0_legacy.pdb"
+  File "NA2FLAC_2.0_legacy.dll"
+  File "avcodec-vgmstream-59.dll"
+  File "avformat-vgmstream-59.dll"
+  File "avutil-vgmstream-57.dll"
+  File "libatrac9.dll"
+  File "libcelt-0061.dll"
+  File "libcelt-0110.dll"
+  File "libg719_decode.dll"
+  File "libmpg123-0.dll"
+  File "libspeex-1.dll"
+  File "libvorbis.dll"
+  File "swresample-vgmstream-4.dll"
+
+  ; Documentation / licenses
+  File "NA2FLAC_2.0_legacy.txt"
+  File "CODE_OF_CONDUCT.md"
+  File "CONTRIBUTING.md"
+  File "README.md"
+  File "NSIS_COPYING.md"
+  File "FFMPEG_COPYING.GPLv3.md"
+  File "FFMPEG_LICENSE.md"
+  File "VGMSTREAM_COPYING.md"
+  File "LICENSE.txt"
+
+SectionEnd
