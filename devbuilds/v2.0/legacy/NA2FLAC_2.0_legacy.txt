@@ -1,0 +1,279 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+
+class NA2FLAC
+{
+    static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+    static string depDir = Path.Combine(baseDir, "NA2FLAC");
+    static string licenseDir = Path.Combine(depDir, "licenses");
+
+    static string vgm = Path.Combine(depDir, "vgmstream-cli.exe");
+    static string ffmpeg = Path.Combine(depDir, "ffmpeg.exe");
+    static string ffprobe = Path.Combine(depDir, "ffprobe.exe");
+
+    static void Main()
+    {
+        Console.Title = "Nintendo Audio to FLAC Converter v2.0 (Legacy)";
+
+        // -------------------- Initial sorting --------------------
+        Directory.CreateDirectory(depDir);
+        Directory.CreateDirectory(licenseDir);
+
+        // Move optional docs if they exist
+        string[] docFiles = { "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "NA2FLAC_2.0_legacy.txt" };
+        foreach (var doc in docFiles)
+        {
+            string srcPath = Path.Combine(baseDir, doc);
+            string destPath = Path.Combine(depDir, doc);
+            if (File.Exists(srcPath) && !File.Exists(destPath))
+                File.Move(srcPath, destPath);
+        }
+
+        // Move dependency files if they are in baseDir
+        string[] depFiles = {
+            "vgmstream-cli.exe","ffmpeg.exe","ffprobe.exe",
+            "avcodec-vgmstream-59.dll","avformat-vgmstream-59.dll","avutil-vgmstream-57.dll",
+            "libatrac9.dll","libcelt-0061.dll","libcelt-0110.dll","libg719_decode.dll",
+            "libmpg123-0.dll","libspeex-1.dll","libvorbis.dll","swresample-vgmstream-4.dll"
+        };
+
+        foreach (var file in depFiles)
+        {
+            string src = Path.Combine(baseDir, file);
+            string dest = Path.Combine(depDir, file);
+            if (File.Exists(src) && !File.Exists(dest)) File.Move(src, dest);
+        }
+
+        // Move license files
+        string[] licenseFiles = {
+            "FFMPEG_COPYING.GPLv3.md","FFMPEG_LICENSE.md",
+            "VGMSTREAM_COPYING.md","LICENSE.txt","NSIS_COPYING.md"
+        };
+        foreach (var file in licenseFiles)
+        {
+            string src = Path.Combine(baseDir, file);
+            string dest = Path.Combine(licenseDir, file);
+            if (File.Exists(src) && !File.Exists(dest)) File.Move(src, dest);
+        }
+
+        // -------------------- Start message --------------------
+        Console.WriteLine("\n===========================================");
+        Console.WriteLine("   Nintendo Audio to FLAC Converter v2.0");
+        Console.WriteLine("===========================================\n");
+
+        // -------------------- Dependency check --------------------
+        var missingDeps = depFiles.Where(f => !File.Exists(Path.Combine(depDir, f))).ToArray();
+        if (missingDeps.Any())
+        {
+            Console.WriteLine("Warning: The following required files are missing:");
+            foreach (var f in missingDeps) Console.WriteLine(f);
+            Console.WriteLine("Please make sure all files are inside the NA2FLAC folder.");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+            return;
+        }
+
+        // -------------------- Scan prompt --------------------
+        if (!PromptYesNo("Start scan? (y/n): ")) return;
+
+        // -------------------- Scan for files --------------------
+        Console.WriteLine("Checking for files...");
+        Thread.Sleep(2000);
+
+        // -------------------- Scan for files --------------------
+        int countAST = 0, countBRSTM = 0, countBCSTM = 0, countBFSTM = 0, countBFWAV = 0, countBWAV = 0,
+            countSWAV = 0, countSTRM = 0, countLOPUS = 0, countIDSP = 0, countHPS = 0, countDSP = 0,
+            countADX = 0, countMPT = 0, countOGG = 0, countCUSTOM = 0;
+
+        var astFiles = Directory.GetFiles(baseDir, "*.ast", SearchOption.AllDirectories); countAST = astFiles.Length;
+        var brstmFiles = Directory.GetFiles(baseDir, "*.brstm", SearchOption.AllDirectories); countBRSTM = brstmFiles.Length;
+        var bcstmFiles = Directory.GetFiles(baseDir, "*.bcstm", SearchOption.AllDirectories); countBCSTM = bcstmFiles.Length;
+        var bfstmFiles = Directory.GetFiles(baseDir, "*.bfstm", SearchOption.AllDirectories); countBFSTM = bfstmFiles.Length;
+        var bfwavFiles = Directory.GetFiles(baseDir, "*.bfwav", SearchOption.AllDirectories); countBFWAV = bfwavFiles.Length;
+        var bwavFiles = Directory.GetFiles(baseDir, "*.bwav", SearchOption.AllDirectories); countBWAV = bwavFiles.Length;
+        var swavFiles = Directory.GetFiles(baseDir, "*.swav", SearchOption.AllDirectories); countSWAV = swavFiles.Length;
+        var strmFiles = Directory.GetFiles(baseDir, "*.strm", SearchOption.AllDirectories); countSTRM = strmFiles.Length;
+        var lopusFiles = Directory.GetFiles(baseDir, "*.lopus", SearchOption.AllDirectories); countLOPUS = lopusFiles.Length;
+        var idspFiles = Directory.GetFiles(baseDir, "*.idsp", SearchOption.AllDirectories); countIDSP = idspFiles.Length;
+        var hpsFiles = Directory.GetFiles(baseDir, "*.hps", SearchOption.AllDirectories); countHPS = hpsFiles.Length;
+        var dspFiles = Directory.GetFiles(baseDir, "*.dsp", SearchOption.AllDirectories); countDSP = dspFiles.Length;
+        var adxFiles = Directory.GetFiles(baseDir, "*.adx", SearchOption.AllDirectories); countADX = adxFiles.Length;
+        var mp3Files = Directory.GetFiles(baseDir, "*.mp3", SearchOption.AllDirectories); countMPT = mp3Files.Length;
+        var oggFiles = Directory.GetFiles(baseDir, "*.ogg", SearchOption.AllDirectories); countOGG = oggFiles.Length;
+        var customFiles = Directory.GetFiles(baseDir, "*.custom", SearchOption.AllDirectories); countCUSTOM = customFiles.Length;
+
+        // Combine all files for processing
+        var allFiles = astFiles.Concat(brstmFiles).Concat(bcstmFiles).Concat(bfstmFiles).Concat(bfwavFiles)
+            .Concat(bwavFiles).Concat(swavFiles).Concat(strmFiles).Concat(lopusFiles).Concat(idspFiles)
+            .Concat(hpsFiles).Concat(dspFiles).Concat(adxFiles).Concat(mp3Files).Concat(oggFiles)
+            .Concat(customFiles).ToArray();
+
+        int totalFiles = allFiles.Length;
+
+        // Check if none found
+        if (totalFiles == 0)
+        {
+            Console.WriteLine("No supported files found.");
+            Console.WriteLine("Please move the executable into the folder containing your audio files or subfolders.");
+            Console.WriteLine("Supported formats: AST, BRSTM, BCSTM, BFSTM, BFWAV, BWAV, SWAV, STRM, LOPUS, IDSP, HPS, DSP, ADX, MP3, OGG");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+            return;
+        }
+
+        // Print counts for each format
+        if (countAST > 0) Console.WriteLine($"{countAST} AST files found!");
+        if (countBRSTM > 0) Console.WriteLine($"{countBRSTM} BRSTM files found!");
+        if (countBCSTM > 0) Console.WriteLine($"{countBCSTM} BCSTM files found!");
+        if (countBFSTM > 0) Console.WriteLine($"{countBFSTM} BFSTM files found!");
+        if (countBFWAV > 0) Console.WriteLine($"{countBFWAV} BFWAV files found!");
+        if (countBWAV > 0) Console.WriteLine($"{countBWAV} BWAV files found!");
+        if (countSWAV > 0) Console.WriteLine($"{countSWAV} SWAV files found!");
+        if (countSTRM > 0) Console.WriteLine($"{countSTRM} STRM files found!");
+        if (countLOPUS > 0) Console.WriteLine($"{countLOPUS} LOPUS files found!");
+        if (countIDSP > 0) Console.WriteLine($"{countIDSP} IDSP files found!");
+        if (countHPS > 0) Console.WriteLine($"{countHPS} HPS files found!");
+        if (countDSP > 0) Console.WriteLine($"{countDSP} DSP files found!");
+        if (countADX > 0) Console.WriteLine($"{countADX} ADX files found!");
+        if (countMPT > 0) Console.WriteLine($"{countMPT} MP3 files found!");
+        if (countOGG > 0) Console.WriteLine($"{countOGG} OGG files found!");
+        if (countCUSTOM > 0) Console.WriteLine($"{countCUSTOM} CUSTOM files found!");
+
+        Console.WriteLine($"({totalFiles} files total)");
+
+        // -------------------- Conversion prompt --------------------
+        if (!PromptYesNo("Convert to FLAC? (y/n): ")) return;
+
+        Console.WriteLine("Starting conversion in 5 seconds...");
+        Thread.Sleep(5000);
+
+        string targetRoot = Path.Combine(baseDir, "converted");
+        Directory.CreateDirectory(targetRoot);
+
+        int converted = 0, failed = 0, wavKept = 0;
+        var startTime = DateTime.Now;
+
+        foreach (var filePath in allFiles)
+        {
+            string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath));
+            string destDir = Path.Combine(targetRoot, relPath);
+            Directory.CreateDirectory(destDir);
+
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string wavPath = Path.Combine(destDir, fileName + ".wav");
+
+            Console.WriteLine($"Processing {filePath}...");
+
+            // Step 1: Decode to WAV
+            RunProcess(vgm, $"\"{filePath}\" -o \"{wavPath}\"");
+
+            // Step 2: Merge stereo _l/_r if exists
+            bool merged = false;
+            if (fileName.EndsWith("_l"))
+            {
+                string rightName = fileName.Substring(0, fileName.Length - 2) + "_r";
+                string rightPath = Path.Combine(destDir, rightName + ".wav");
+                if (File.Exists(rightPath))
+                {
+                    string baseName = fileName.Substring(0, fileName.Length - 2);
+                    string flacPath = Path.Combine(destDir, baseName + ".flac");
+                    RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -i \"{rightPath}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map \"[a]\" -c:a flac \"{flacPath}\"");
+                    if (File.Exists(flacPath))
+                    {
+                        File.Delete(wavPath);
+                        File.Delete(rightPath);
+                        converted++;
+                        merged = true;
+                    }
+                    else wavKept++;
+                }
+            }
+
+            if (!merged)
+            {
+                int channels = 0;
+                var ffprobeOutput = RunProcessCapture(ffprobe, $"-v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 \"{wavPath}\"");
+                if (int.TryParse(ffprobeOutput.Trim(), out int ch)) channels = ch;
+
+                if (channels <= 8)
+                {
+                    string flacPath = Path.Combine(destDir, fileName + ".flac");
+                    RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -c:a flac \"{flacPath}\"");
+                    if (File.Exists(flacPath))
+                    {
+                        File.Delete(wavPath);
+                        converted++;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Conversion failed for {wavPath}");
+                        failed++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Keeping {wavPath} because it has {channels} channels");
+                    wavKept++;
+                }
+            }
+        }
+
+        var endTime = DateTime.Now;
+        var totalTime = endTime - startTime;
+
+        Console.WriteLine("\n=======================================");
+        Console.WriteLine("Conversion Summary");
+        Console.WriteLine("=======================================");
+        Console.WriteLine($"Files converted (FLAC): {converted}");
+        Console.WriteLine($"Files kept as WAV (too many channels or merge failed): {(wavKept > 0 ? wavKept.ToString() : "None")}");
+        Console.WriteLine($"Failed to convert: {(failed > 0 ? failed.ToString() : "None")}");
+        Console.WriteLine($"Total time: {totalTime.Minutes}m {totalTime.Seconds}s");
+        Console.WriteLine("=======================================\n");
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+
+    static bool PromptYesNo(string message)
+    {
+        while (true)
+        {
+            Console.Write(message);
+            var input = Console.ReadLine()?.Trim().ToLower() ?? "";
+            if (input == "y") return true;
+            if (input == "n") return false;
+            Console.WriteLine("Please type y or n.");
+        }
+    }
+
+    static void RunProcess(string exe, string args)
+    {
+        var psi = new ProcessStartInfo(exe, args)
+        {
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = false,
+            RedirectStandardError = false
+        };
+        using var process = Process.Start(psi);
+        process.WaitForExit();
+    }
+
+    static string RunProcessCapture(string exe, string args)
+    {
+        var psi = new ProcessStartInfo(exe, args)
+        {
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+        using var process = Process.Start(psi);
+        string output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+        return output;
+    }
+}
