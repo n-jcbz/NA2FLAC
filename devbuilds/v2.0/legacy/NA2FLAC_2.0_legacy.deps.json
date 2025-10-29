@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "NA2FLAC_2.0_legacy/2.0.0.0": {
+        "runtime": {
+          "NA2FLAC_2.0_legacy.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "NA2FLAC_2.0_legacy/2.0.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
