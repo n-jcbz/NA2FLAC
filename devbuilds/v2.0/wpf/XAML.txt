@@ -38,7 +38,7 @@
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FF555555" Duration="0:0:0.2"/>
-                                            <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#FF007ACC" Duration="0:0:0.2"/>
+                                            <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#FF47A097" Duration="0:0:0.2"/>
                                             <ThicknessAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -154,7 +154,7 @@
 
         <Style TargetType="ProgressBar">
             <Setter Property="Background" Value="#FF1E1E1E"/>
-            <Setter Property="Foreground" Value="#FF007ACC"/>
+            <Setter Property="Foreground" Value="#FF47A097"/>
             <Setter Property="BorderBrush" Value="#FF555555"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">

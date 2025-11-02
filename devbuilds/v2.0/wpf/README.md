@@ -2,15 +2,15 @@
 
 **Nintendo Audio to FLAC Converter**
 
-NA2FLAC is a lightweight batch-based audio conversion tool that scans and converts Nintendo audio formats into high-quality FLAC files.  
+NA2FLAC is a C#-based audio conversion tool that scans and converts Nintendo audio formats into high-quality FLAC files.  
 It guides the user through each step with simple prompts (console) or a small GUI (WPF), giving you full control over scanning, conversion, and file organization.
 
 ---
 
 ## Builds
 
-- **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual batch conversion and to work from any selected input/output folder.
-- **Legacy build (v2.0 Legacy)** — console application ported to C#, matching the original v1.2.1 behaviour for users who prefer the simple console workflow.
+- **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual conversion and to work from any selected input/output folder.
+- **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application, matching the original v1.2.1 behaviour for users who prefer the simple console workflow.
 
 ---
 
@@ -35,7 +35,7 @@ It guides the user through each step with simple prompts (console) or a small GU
   - By default the WPF build lets you pick a separate output directory; if left empty it defaults to the input folder (it still creates `converted` there).
 
 - **File-size estimation**
-  - Scans report `original -> ~estimated after conversion` using per-format heuristics to give a reasonable ballpark for final FLAC size.
+  - Scans report `original -> ~estimated after conversion` using per-format heuristics to give a reasonable range for final FLAC size.
 
 - **Per-file progress**
   - Both builds display a `(N/Total) Processing ...` counter while converting.
@@ -45,39 +45,40 @@ It guides the user through each step with simple prompts (console) or a small GU
   - WAVs are kept if conversion fails or if the file has too many channels.
 
 - **Tidied dependency layout**
-  - App files live in the install folder; third-party binaries (ffmpeg, vgmstream, ffprobe and their native DLLs) are placed in a `dependencies` folder.
-  - Licenses are grouped in `NA2FLAC/licenses` (or `dependencies/licenses` in installer layout) for clarity.
+  - App files live in the install folder; third-party binaries (ffmpeg, vgmstream, ffprobe and their DLLs) are placed in a `dependencies` folder.
+  - Licenses are grouped in `NA2FLAC/licenses` for clarity.
 
 - **Installer**
-  - NSIS-based installer available (Program Files variant creates desktop shortcut, Start Menu entry, and Uninstaller).
+  - NSIS-based installer (creates a desktop shortcut, Start Menu entry, and an Uninstaller in the `NA2FLAC` folder).
   - Installer places the app files, `dependencies`, and `licenses` in the chosen install location.
+  - Installer of the legacy build creates the `NA2FLAC` folder in the same directory it is being run from.
 
 ---
 
 ## How It Works (WPF)
 
-1. Run the installer (or unzip the package) to your chosen folder (Program Files or other).
-2. Run the WPF app (`NA2FLAC v2.0.exe`) from the install location.
-3. Use *Browse* to choose your input folder (the folder with your audio files), and optionally set an output folder.
-4. Click **Scan** — app will scan supported audio formats and show counts and a size estimate.
-5. Click **Convert** — progress bar and status text update while the app converts files (vgmstream → WAV → ffmpeg → FLAC).
-6. Converted files appear in the `converted` folder inside the selected output (or input) directory, preserving folder structure.
+1. Run the installer and select your chosen folder to install NA2FLAC into
+2. Run the WPF app (`NA2FLAC v2.0.exe`) from the install location or through the shortcut
+3. Use *Browse* to choose your input folder (the folder with your audio files or any folder above it), and optionally set an output folder
+4. Click **Scan** — app will scan supported audio formats and show counts and a size estimate
+5. Click **Convert** — progress bar and status text update while the app converts files (vgmstream → WAV → ffmpeg → FLAC)
+6. Converted files appear in the `converted` folder inside the selected output (or input) directory, preserving folder structure
 
 ---
 
 ## How It Works (Legacy / Console)
 
-1. Place the installer or legacy executable in the folder containing your audio files (or run it from any folder after installing).
-2. Run `NA2FLAC_2.0_legacy.exe` (console).
-3. Confirm the prompts to scan and convert.
-4. Converted files are written into a `converted` folder inside the folder where you ran the exe (preserving structure).
+1. Place the installer in the folder containing your audio files (or any folder above it)
+2. Run `NA2FLAC_2.0_legacy.exe`
+3. Confirm the prompts to scan and convert
+4. Converted files are written into a `converted` folder inside the folder where you ran the exe (preserving structure)
 
 ---
 
 ## Requirements
 
 - Windows 10 or later  
-- **WPF build:** .NET 8 runtime (the WPF app is built for .NET 8).  
+- **WPF build:** is self-contained and does not require you to install the .NET 8 runtime.
 - No separate install needed for ffmpeg/ffprobe/vgmstream — they are bundled in `dependencies` by the installer.
 
 ---
@@ -100,7 +101,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 - FFmpeg and FFprobe by the FFmpeg developers  
 - VGMStream by the VGMStream team  
-- BatToExe Portable by Makazzz (used in pre-v2.0 builds)  
+- BatToExe Portable by Makazzz (used for pre-v2.0 builds)  
 - NSIS Installer System by the NSIS developers  
 - NA2FLAC by n.jcbz
 
@@ -108,8 +109,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 ## Notes & Caveats
 
-- Size estimations are heuristic — streamed formats (BFSTM, etc.) can be variable and may require tuning of multipliers for better accuracy.
-- No persistent logs by default to keep things simple and minimal; optional logging can be added later.
+- Size estimations are heuristic — formats can be variable and may require tuning of multipliers for better accuracy.
 
 ---
 
