@@ -78,7 +78,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## Requirements
 
 - Windows 10 or later  
-- **WPF build:** is self-contained and does not require you to install the .NET 8 runtime.
+- **WPF build:** requires .NET 8 runtime. If you do not have it installed, the program will automatically provide a link.
 - No separate install needed for ffmpeg/ffprobe/vgmstream — they are bundled in `dependencies` by the installer.
 
 ---
