@@ -309,7 +309,8 @@ namespace NA2FLAC_v2._0_WPF
         {
             return extension switch
             {
-                ".brstm" or ".bcstm" or ".bfstm" => 4.5,
+                ".brstm" => 1.5,
+                ".bcstm" or ".bfstm" => 4.5,
                 ".bwav" or ".bfwav" or ".dsp" => 1.5,
                 ".hps" or ".strm" or ".swav" => 2.3,
                 ".lopus" => 5.0,
