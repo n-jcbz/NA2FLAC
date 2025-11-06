@@ -10,7 +10,7 @@ using System.Globalization;
 using Path = System.IO.Path;
 using System.Windows.Forms;
 
-// BUILD TYPE: STABLE — WPF
+// BUILD TYPE: WPF — STABLE — IN DEVELOPMENT — Check EstimateFlacMultiplier @ line 320
 
 // ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
 // YOU CAN REPLACE THEM WITH ANY PROPRIETARY AUDIO FORMAT TO TEST COMPATIBILITY.
@@ -28,7 +28,7 @@ namespace NA2FLAC_v2._0_WPF
         string ffmpeg = "";
         string ffprobe = "";
         string[] allFiles;
-        string outputDir = ""; // NEW
+        string outputDir = "";
 
         public MainWindow()
         {
@@ -58,7 +58,7 @@ namespace NA2FLAC_v2._0_WPF
             }
         }
 
-        // NEW: browse output folder
+        // browse output folder
         private void BrowseOutput_Click(object sender, RoutedEventArgs e)
         {
             using var fbd = new FolderBrowserDialog();
@@ -73,7 +73,7 @@ namespace NA2FLAC_v2._0_WPF
             }
         }
 
-        // NEW: open output folder in Explorer
+        // open output folder in Explorer
         private void OpenOutput_Click(object sender, RoutedEventArgs e)
         {
             string toOpen = !string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text :
@@ -88,17 +88,25 @@ namespace NA2FLAC_v2._0_WPF
             Process.Start(new ProcessStartInfo("explorer.exe", $"\"{toOpen}\"") { UseShellExecute = true });
         }
 
+        // allow window dragging via title bar
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
                 this.DragMove();
         }
 
+        // window control buttons
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        // trims a file path to fit within a TextBlock's width, adding ellipses as needed
         private string GetTrimmedPath(string fullPath, TextBlock tb, string prefix)
         {
             string fileName = Path.GetFileName(fullPath);
@@ -155,15 +163,16 @@ namespace NA2FLAC_v2._0_WPF
             return best;
         }
 
+        // error message if no folder selected
         private void Scan_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(baseDir))
             {
-                System.Windows.MessageBox.Show("Select a folder first!");
+                Dispatcher.Invoke(() => txtStatus.Text = $"Select a folder first!");
                 return;
             }
 
-            Task.Run(() =>
+            Task.Run(() => // dependency check and file scan
             {
                 Dispatcher.Invoke(() => txtStatus.Text = "Checking dependencies...");
 
@@ -198,6 +207,7 @@ namespace NA2FLAC_v2._0_WPF
                     return;
                 }
 
+                // estimate sizes
                 long totalOriginalBytes = 0;
                 double estimatedFlacBytes = 0;
                 foreach (var file in allFiles)
@@ -212,11 +222,12 @@ namespace NA2FLAC_v2._0_WPF
             });
         }
 
+        // error message if scan not done yet
         private void Convert_Click(object sender, RoutedEventArgs e)
         {
             if (allFiles == null || allFiles.Length == 0)
             {
-                System.Windows.MessageBox.Show("No files to convert. Scan first!");
+                Dispatcher.Invoke(() => txtStatus.Text = $"No files to convert. Scan first!");
                 return;
             }
 
@@ -235,15 +246,16 @@ namespace NA2FLAC_v2._0_WPF
             {
                 int totalFiles = allFiles.Length;
                 int converted = 0, failed = 0, wavKept = 0;
-                string targetRoot = Path.Combine(outputDir, "converted");
-                Directory.CreateDirectory(targetRoot);
+                string targetRoot = Path.Combine(outputDir, "converted"); // set output to "converted" subfolder
+                Directory.CreateDirectory(targetRoot); // create "converted" folder
 
+                // ------------------------------------------------------------- conversion loop -------------------------------------------------------------
                 for (int i = 0; i < totalFiles; i++)
                 {
                     var filePath = allFiles[i];
-                    string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath));
-                    string destDir = Path.Combine(targetRoot, relPath);
-                    Directory.CreateDirectory(destDir);
+                    string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath)); // get relative path of file
+                    string destDir = Path.Combine(targetRoot, relPath); // copy relative path to destination to maintain structure
+                    Directory.CreateDirectory(destDir); 
 
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
                     string wavPath = Path.Combine(destDir, fileName + ".wav");
@@ -305,18 +317,35 @@ namespace NA2FLAC_v2._0_WPF
             });
         }
 
-        private static double EstimateFlacMultiplier(string extension)
+        static double EstimateFlacMultiplier(string extension) // Variations can appear and mess up estimations
         {
+            if (extension.EndsWith("_32.brstm")) return 4.7; // BRSTM variation, tested with Wii Party
+
+            if (extension.EndsWith("_only32.brstm")) return 1; // Specific case for Mario Kart Wii? will stay at 1
+            // Set to 1 since there's currently not enough testing data to decide any other value:
+            if (extension.EndsWith("32_n.brstm")) return 1; // Specific case for Mario Kart Wii
+            if (extension.EndsWith("32_f.brstm")) return 1; // Specific case for Mario Kart Wii
+
+            if (extension.EndsWith(".ry.32.brstm")) return 1.35; // BRSTM variation, tested with Wii Sports Resort
+            if (extension.EndsWith(".32.c4.brstm")) return 1.3; // BRSTM variation, tested with Wii Sports
+            if (extension == ".brstm") return 5.3; // Tested with Mario Party 8 (seemingly standard BRSTM files since no "32" is in file names)
             return extension switch
             {
-                ".brstm" or ".bcstm" or ".bfstm" => 4.5,
-                ".bwav" or ".bfwav" or ".dsp" => 1.5,
-                ".hps" or ".strm" or ".swav" => 2.3,
-                ".lopus" => 5.0,
-                ".ast" or ".idsp" or ".adx" => 2.0,
-                ".ogg" or ".mp3" => 2.5,
+                ".bcstm" => 4.5, // Not tested yet
+                ".bfstm" => 4.5, // Tested — Accurate (MK8 Deluxe + 3D World/Bowser's Fury + Odyssey, 620 files total)
+                ".bwav" => 2.3, // Tested — Accurate (ACNH, 860 files total)
+                ".bfwav" => 1.5, // Not tested yet
+                ".dsp" => 1.5, // Not tested yet
+                ".hps" => 2.3, // Not tested yet
+                ".strm" => 0.56, // Tested — Accurate (MySims on Wii, 158 files total) (The only format here that goes down in size, interesting...)
+                ".swav" => 2.3, // Not tested yet
+                ".lopus" => 5.0, // Not tested yet
+                ".ast" => 1.22, // Tested — Accurate (Galaxy 1 + 2 on Wii, 170 files total)
+                ".idsp" => 2.0, // Not tested yet
+                ".adx" => 4.23, // Tested — Accurate (M&S OWG on Wii, 106 files total)
+                ".ogg" or ".mp3" => 2.5, // Tested — Accurate (Minecraft on Switch + Random MP3 files)
                 ".custom" => 1.0,
-                _ => 2.5
+                _ => 2.5 // Fallback for unknown formats
             };
         }
 
