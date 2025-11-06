@@ -38,4 +38,5 @@
   - I'm gonna crash out fr, ong they do ts on purpose chat 🙏
 
 - TL;DR: special-cases are in; BRSTM is the main headache; more sample files per game will tighten multipliers.
-- Check v2.0 release, updated versions replaced old builds
+
+### Check v2.0 release, updated versions replaced old builds
