@@ -331,6 +331,7 @@ namespace NA2FLAC_v2._0_WPF
             if (extension == ".brstm") return 5.3; // Tested with Mario Party 8 (seemingly standard BRSTM files since no "32" is in file names)
             return extension switch
             {
+<<<<<<< HEAD
                 ".bcstm" => 4.5, // Not tested yet
                 ".bfstm" => 4.5, // Tested — Accurate (MK8 Deluxe + 3D World/Bowser's Fury + Odyssey, 620 files total)
                 ".bwav" => 2.3, // Tested — Accurate (ACNH, 860 files total)
@@ -344,6 +345,15 @@ namespace NA2FLAC_v2._0_WPF
                 ".idsp" => 2.0, // Not tested yet
                 ".adx" => 4.23, // Tested — Accurate (M&S OWG on Wii, 106 files total)
                 ".ogg" or ".mp3" => 2.5, // Tested — Accurate (Minecraft on Switch + Random MP3 files)
+=======
+                ".brstm" => 1.5,
+                ".bcstm" or ".bfstm" => 4.5,
+                ".bwav" or ".bfwav" or ".dsp" => 1.5,
+                ".hps" or ".strm" or ".swav" => 2.3,
+                ".lopus" => 5.0,
+                ".ast" or ".idsp" or ".adx" => 2.0,
+                ".ogg" or ".mp3" => 2.5,
+>>>>>>> c2f2df72718e985d3a79dd9094103cc1ede39747
                 ".custom" => 1.0,
                 _ => 2.5 // Fallback for unknown formats
             };
