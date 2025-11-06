@@ -87,13 +87,13 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 - **NA2FLAC** — MIT License (see `NA2FLAC/licenses/LICENSE.txt`)  
 - **FFmpeg / FFprobe** — GNU GPL v3 (see `NA2FLAC/licenses/FFMPEG_COPYING.GPLv3.md` and `FFMPEG_LICENSE.md`)  
-  Visit https://ffmpeg.org  
+  Visit [https://ffmpeg.org](https://ffmpeg.org)  
 - **VGMStream** — MIT License (see `NA2FLAC/licenses/VGMSTREAM_COPYING.md`)  
-  Visit https://vgmstream.org  
+  Visit [https://vgmstream.org](https://vgmstream.org/)
 - **BatToExe Portable** — MIT License (see `NA2FLAC/licenses/BatToExePortable_LICENSE.md`)  
-  Visit https://github.com/Makazzz/BatToExePortable  
+  Visit [https://github.com/Makazzz/BatToExePortable](https://github.com/Makazzz/BatToExePortable)  
 - **NSIS (Nullsoft Scriptable Install System)** — zlib/libpng License (see `NA2FLAC/licenses/NSIS_COPYING.md`)  
-  Visit https://nsis.sourceforge.io
+  Visit [https://nsis.sourceforge.io](https://nsis.sourceforge.io)
 
 ---
 
