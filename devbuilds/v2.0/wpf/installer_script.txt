@@ -39,7 +39,7 @@ Section "Install"
   ; Create dependencies folders
   CreateDirectory "$INSTDIR"
   CreateDirectory "$INSTDIR\dependencies"
-  CreateDirectory "$INSTDIR\dependencies\licenses"
+  CreateDirectory "$INSTDIR\licenses"
 
   ;--------------------------
   ; Copy all executables / dependencies

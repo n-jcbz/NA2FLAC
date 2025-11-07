@@ -35,7 +35,7 @@ namespace NA2FLAC_v2._0_WPF
             InitializeComponent();
             string exeDir = AppDomain.CurrentDomain.BaseDirectory;
             depDir = Path.Combine(exeDir, "dependencies");    // third-party tools
-            licenseDir = Path.Combine(depDir, "licenses");    // licenses
+            licenseDir = Path.Combine(exeDir, "licenses");    // licenses
             vgm = Path.Combine(depDir, "vgmstream-cli.exe");
             ffmpeg = Path.Combine(depDir, "ffmpeg.exe");
             ffprobe = Path.Combine(depDir, "ffprobe.exe");
