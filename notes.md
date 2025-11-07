@@ -30,6 +30,7 @@
    
 - Had to update the Legacy installer since it had an unfinished version for some reason                                
   (it didn't have size estimation and file count during conversion)
+- Fixed a small problem in the WPF build that would create a `licenses` folder in `\dependencies`
 
 - Quick status / to-do
   - BRSTM still needs systematic per-game sampling — suffixes like `_32`, `_only32`, `_32_n`, `_32_f` probably behave differently across titles.
