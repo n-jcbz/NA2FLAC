@@ -1,0 +1,52 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\NSZ 2\\source\\repos\\NA2FLAC_v2.0_WPF\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BFC9E306-4DD0-48BB-A09F-B4BE6EA29B1D}|NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF.csproj|c:\\users\\nsz 2\\source\\repos\\na2flac_v2.0_wpf\\na2flac_v2.0_wpf\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFC9E306-4DD0-48BB-A09F-B4BE6EA29B1D}|NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF.csproj|solutionrelative:na2flac_v2.0_wpf\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFC9E306-4DD0-48BB-A09F-B4BE6EA29B1D}|NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF.csproj|c:\\users\\nsz 2\\source\\repos\\na2flac_v2.0_wpf\\na2flac_v2.0_wpf\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{BFC9E306-4DD0-48BB-A09F-B4BE6EA29B1D}|NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF.csproj|solutionrelative:na2flac_v2.0_wpf\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\NSZ 2\\source\\repos\\NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "NA2FLAC_v2.0_WPF\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\NSZ 2\\source\\repos\\NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF\\MainWindow.xaml",
+              "RelativeToolTip": "NA2FLAC_v2.0_WPF\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-30T09:11:33.581Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\NSZ 2\\source\\repos\\NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "NA2FLAC_v2.0_WPF\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\NSZ 2\\source\\repos\\NA2FLAC_v2.0_WPF\\NA2FLAC_v2.0_WPF\\MainWindow.xaml.cs",
+              "RelativeToolTip": "NA2FLAC_v2.0_WPF\\MainWindow.xaml.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAQwCUAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-30T09:11:33.443Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

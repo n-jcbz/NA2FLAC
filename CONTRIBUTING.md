@@ -1,112 +1,96 @@
 # Contributing to NA2FLAC
 
-Thank you for considering contributing to **NA2FLAC (Nintendo Audio to FLAC Converter)**!  
-This guide will help you safely submit bug fixes, new formats, performance improvements, and quality-of-life (QoL) enhancements.
+Thanks for thinking about contributing — welcome!  
+NA2FLAC is now a small .NET 8 project with two builds: a WPF UI and a legacy console build. This doc explains the current setup and how to help.
 
 ---
 
-## 1. Code of Conduct
-
-Please be respectful and professional in all interactions.  
-Abusive, discriminatory, or inappropriate behavior will not be tolerated and may result in removal from the project.
-
----
-
-## 2. Reporting Issues
-
-Before submitting code, make sure to **check for existing issues**. If none exists, open a new issue and include:
-
-- Your operating system
-- The audio format(s) you were working with
-- Steps to reproduce the issue
-- Any error messages or abnormal behavior
+## Quick overview
+- **WPF build (v2.0)** — `NA2FLAC_v2.0_WPF`  
+  - Full .NET 8 WPF UI (frameless, rounded window).  
+  - Uses `dependencies` folder for third-party binaries (`vgmstream-cli.exe`, `ffmpeg.exe`, `ffprobe.exe`) and `dependencies\licenses` for license files.
+- **Legacy build (v2.0 - legacy)** — console C# port (same conversion pipeline, old workflow).
+- Installer scripts live in `devbuilds/*/installer_script.nsi`.
+- If you need the repo tree for context, check the `devbuilds` and `bin` folders (dependencies are included in `devbuilds/*/dependencies`).
 
 ---
 
-## 3. Contributing Code
-
-NA2FLAC is a `.bat` project designed for simplicity and reliability. Contributions can include:
-
-- Adding new audio format support
-- Improving performance (conversion speed, memory usage)
-- Enhancing user experience / QoL (prompts, delays, folder organization)
-- Bug fixes
-
-**Steps to contribute:**
-
-1. **Fork** the repository.  
-2. **Clone** your fork:  
-
-   `git clone https://github.com/yourusername/NA2FLAC.git`
-
-3. **Create a new branch** for your work:
-
-   `git checkout -b feature-new-format`
-
-4. **Make your changes** in `devbuilds/contributed/NA2FLAC_vX.X.md`. Test thoroughly by building a `.bat` locally.
-
-  **IMPORTANT:** *You need to have `ffmpeg.exe`, `ffprobe.exe`, and all files in the `bin/vgmstream` folder since they are all dependencies of NA2FLAC*
-
-   ### Adding a new format
-
-   NA2FLAC already includes a system for placeholders:
-
-`:: ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.`                                                                             
-`:: YOU CAN REPLACE THEM WITH ANY PROPRIETARY AUDIO FORMAT TO TEST COMPATIBILITY.`                                                          
-`:: KEEP IN MIND CASE-SENSITIVITY! REPLACE "CUSTOM" AND "custom" ACCORDINGLY.`                                                                                     
-`:: IF YOU'RE CONTRIBUTING TO FORMAT SUPPORT: PLEASE RE-ADD THE CUSTOM PARTS UNDER/AFTER THE NEW FORMAT.`                                                                                         
-
-* Add your new format **under/after existing formats** in the conversion loop.  
-* Keep variable names clear and consistent (`countFORMAT`, `formatLeft`, etc.).  
-* Make sure to **test decoding to WAV first** to avoid errors.   
-* Respect the `_l/_r` stereo merging logic if applicable.
-
-5. **Commit your changes** with a descriptive message:  
-
-`git commit -m "Add support for .XYZ format"`
-
-6. **Push your branch** to your fork (not the main repository):  
-
-`git push origin feature-new-format`
-
-7. **Open a pull request (PR)** from your fork to the main repository. Include a description of what you added or changed.
-
-## 4. Code Style & Guidelines
-
-To keep NA2FLAC clean and maintainable:
-
-* Use descriptive variable names (`file`, `ext`, `countAST`, etc.).
-* Comment all significant changes, especially for new formats or performance tweaks.
-* Keep indentation consistent and line lengths reasonable.
-* Follow the existing conversion and sorting logic.
-* Maintain the **user-friendly prompts and delays** *(important for accessibility)*.
+## Before you start
+- Install the **.NET 8 SDK** and a suitable editor/IDE (Visual Studio 2022/2023 or VS Code with C# extensions).
+- Windows 10 or later is required for the .NET 8 builds.
+- Keep third-party binaries and their licenses: `vgmstream-cli`, `ffmpeg`, `ffprobe` + the VGMStream/FFmpeg DLLs and license files.
 
 ---
 
-## 5. Testing
-
-* Test all changes locally before submitting a PR.
-* Use multiple file formats where applicable.
-* Ensure that `_l/_r` merges work correctly, and that WAV/FLAC output is generated.
-* Check that sorting into folders functions properly.
-
----
-
-## 6. Performance & QoL Contributions
-
-NA2FLAC is designed to be lightweight, flexible, and user-friendly. Contributions can improve:
-
-* **Performance:** Reduce conversion time, optimize loops, reduce redundant operations.
-* **User Experience / QoL:** Adjust timeouts, prompts, console readability, error messages.
-* **Multi-format reliability:** Ensure multiple formats in the same folder convert without issues.
+## Simple dev workflow
+1. **Fork** the repo.  
+2. `git clone <your-fork>`  
+3. `git checkout -b feature/whatever-you-are-doing`  
+4. Make changes (C# or XAML). You can change XAML freely — UI edits are welcome.  
+5. Build & run:
+   - Visual Studio: open the solution/project and run the WPF project.
+   - CLI: `dotnet build` and `dotnet run --project path\to\NA2FLAC_v2.0_WPF.csproj`
+6. Test with real files. Keep `dependencies` present (either copy from `devbuilds/v2.0/wpf/dependencies` or keep them in the project folder).
+7. Commit & push your branch, open a PR with a clear description and required test steps.
 
 ---
 
-## 7. License & Attribution
-
-By submitting a PR, you agree that your contribution will be licensed under the same license as NA2FLAC.
-Credit will be given in commit history and the repository log.
+## What to edit / hotspots
+- **Size estimation:** `EstimateFlacMultiplier(...)` in `MainWindow.cs` (comment says `Check EstimateFlacMultiplier @ line 320`).  
+  - If you want to adjust format multipliers or add specific suffix rules, do it there. Small tests per-file help a lot (we added several suffix-based BRSTM rules).
+- **Conversion logic:** decoding/merging/conversion loops are in `Convert_Click` in the WPF project and in the legacy `Program` file for console build.
+- **UI:** XAML files are the place to tweak layout, colors (`#47A097` is the app color), and title-bar controls (close/minimize implemented already).
+- **Installers:** NSIS scripts are in `devbuilds/*/installer_script.nsi` — update if you change folder layout or add/remove files.
 
 ---
 
-Thank you for helping make **NA2FLAC** better for everyone!
+## Testing & QA
+- Provide a short test-case in your PR (example: one sample file and expected multiplier/behavior). If sample files are too big to attach, provide a short list of filenames + sizes and the expected result.
+- For multiplier tweaks: pick one representative file, run scan, run conversion, measure before/after and iterate. Consider adding a dev-only “calibrate” helper (pick a file, run conversion, compute multiplier).
+- Keep edge cases in mind: `_l/_r` stereo merging, per-game suffix variants (e.g. `_32`, `_only32`, `_32_n`, `.ry.32.brstm`, `.32.c4.brstm`) — BRSTM is especially fiddly.
+
+---
+
+## PR checklist (short)
+- [ ] Describe the change clearly.
+- [ ] Include how to reproduce/test.
+- [ ] Update `README.md` or notes if behaviour changes.
+- [ ] If you modify dependencies, include license updates or mention where binaries are expected.
+- [ ] Keep commits small & focused.
+
+---
+
+## Issues / bug reports
+When opening an issue, include:
+- OS + .NET SDK version.
+- Build tested (WPF or Legacy).
+- A minimal repro or sample filenames + sizes.
+- Expected vs actual behaviour.
+- Any logs or console output (UI: the bottom status textbox shows scan/conversion messages).
+
+---
+
+## Style & code notes
+- Keep code readable and commented (we like clear names: `file`, `allFiles`, `depDir`, `EstimateFlacMultiplier`, etc.).
+- XAML: keep UI changes modular (small, reversible tweaks) and leave `resources` the way they are unless you improve consistency.
+- Tests: add notes in your PR about which game/formats you tested (BRSTM/AST/ADX/etc.).
+
+---
+
+## License & attribution
+By contributing, you agree to license your work under the repo license. Respect third-party licenses — keep license files in `dependencies/licenses`.
+
+---
+
+## Small dev notes / tips
+- If you touch the size estimation, mention the datasets you used (e.g. “Wii Party — 581 BRSTM files”).
+- The WPF status textbox `txtStatus` is used for user-facing messages instead of system popups — aim to keep messages concise and helpful.
+- The app color is `#47A097` — use it for UI accents if you add controls.
+
+---
+
+Thanks — keep it small and modular. If you want, I can also:
+- add a short `DEVELOPMENT.md` with build commands and a VS setup checklist, or
+- produce an issue template for multiplier tests (so submitters attach sample filenames and sizes).
+
+Either way, the above CONTRIBUTING.md is ready to drop in.

@@ -1,0 +1,393 @@
+﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Globalization;
+using Path = System.IO.Path;
+using System.Windows.Forms;
+
+// BUILD TYPE: WPF — STABLE — IN DEVELOPMENT — Check EstimateFlacMultiplier @ line 320
+
+// ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
+// YOU CAN REPLACE THEM WITH ANY PROPRIETARY AUDIO FORMAT TO TEST COMPATIBILITY.
+// KEEP IN MIND CASE-SENSITIVITY! REPLACE "CUSTOM" AND "custom" ACCORDINGLY.
+// IF YOU'RE CONTRIBUTING TO FORMAT SUPPORT: PLEASE RE-ADD THE CUSTOM PARTS UNDER/AFTER THE NEW FORMAT.
+
+namespace NA2FLAC_v2._0_WPF
+{
+    public partial class MainWindow : Window
+    {
+        string baseDir = "";
+        string depDir = "";
+        string licenseDir = "";
+        string vgm = "";
+        string ffmpeg = "";
+        string ffprobe = "";
+        string[] allFiles;
+        string outputDir = "";
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            depDir = Path.Combine(exeDir, "dependencies");    // third-party tools
+            licenseDir = Path.Combine(exeDir, "licenses");    // licenses
+            vgm = Path.Combine(depDir, "vgmstream-cli.exe");
+            ffmpeg = Path.Combine(depDir, "ffmpeg.exe");
+            ffprobe = Path.Combine(depDir, "ffprobe.exe");
+        }
+
+        private void BrowseFolder_Click(object sender, RoutedEventArgs e)
+        {
+            using var fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                txtFolder.Text = fbd.SelectedPath;
+                baseDir = fbd.SelectedPath;
+
+                // if user hasn't set an output manually, default output to selected input folder
+                if (string.IsNullOrWhiteSpace(txtOutput.Text))
+                {
+                    txtOutput.Text = baseDir;
+                    outputDir = baseDir;
+                }
+            }
+        }
+
+        // browse output folder
+        private void BrowseOutput_Click(object sender, RoutedEventArgs e)
+        {
+            using var fbd = new FolderBrowserDialog();
+            // default to baseDir if available, otherwise exe folder
+            string initial = string.IsNullOrWhiteSpace(baseDir) ? AppDomain.CurrentDomain.BaseDirectory : baseDir;
+            fbd.SelectedPath = Directory.Exists(initial) ? initial : string.Empty;
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                txtOutput.Text = fbd.SelectedPath;
+                outputDir = fbd.SelectedPath;
+            }
+        }
+
+        // open output folder in Explorer
+        private void OpenOutput_Click(object sender, RoutedEventArgs e)
+        {
+            string toOpen = !string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text :
+                            (!string.IsNullOrWhiteSpace(baseDir) ? baseDir : AppDomain.CurrentDomain.BaseDirectory);
+
+            if (!Directory.Exists(toOpen))
+            {
+                System.Windows.MessageBox.Show("Output folder doesn't exist.");
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo("explorer.exe", $"\"{toOpen}\"") { UseShellExecute = true });
+        }
+
+        // allow window dragging via title bar
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+                this.DragMove();
+        }
+
+        // window control buttons
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        // trims a file path to fit within a TextBlock's width, adding ellipses as needed
+        private string GetTrimmedPath(string fullPath, TextBlock tb, string prefix)
+        {
+            string fileName = Path.GetFileName(fullPath);
+            string dir = Path.GetDirectoryName(fullPath) ?? "";
+            string display = string.IsNullOrEmpty(dir) ? fileName : dir + "\\" + fileName;
+
+            var typeface = new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(tb).PixelsPerDip;
+
+            var ft = new FormattedText(prefix + display, CultureInfo.CurrentCulture, tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, pixelsPerDip);
+            if (ft.Width <= tb.ActualWidth)
+                return display;
+
+            string[] parts = dir.Split(Path.DirectorySeparatorChar);
+            if (parts.Length <= 1)
+                return "...\\" + fileName;
+
+            int maxEndKeep = parts.Length - 1;
+            for (int endKeep = maxEndKeep; endKeep >= 1; endKeep--)
+            {
+                int skipTo = parts.Length - endKeep;
+                string candidatePath = parts[0] + "\\...\\" + string.Join("\\", parts.Skip(skipTo)) + "\\" + fileName;
+                ft = new FormattedText(prefix + candidatePath, CultureInfo.CurrentCulture, tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, pixelsPerDip);
+                if (ft.Width <= tb.ActualWidth)
+                    return candidatePath;
+            }
+
+            string fallback = "...\\" + fileName;
+            ft = new FormattedText(prefix + fallback, CultureInfo.CurrentCulture, tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, pixelsPerDip);
+            if (ft.Width <= tb.ActualWidth)
+                return fallback;
+
+            string ext = Path.GetExtension(fileName);
+            string baseName = Path.GetFileNameWithoutExtension(fileName);
+            if (string.IsNullOrEmpty(baseName)) return fileName;
+
+            int low = 1, high = baseName.Length;
+            string best = fileName;
+            while (low <= high)
+            {
+                int mid = (low + high) / 2;
+                string trimmedFile = "..." + baseName.Substring(baseName.Length - mid) + ext;
+                ft = new FormattedText(prefix + trimmedFile, CultureInfo.CurrentCulture, tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, pixelsPerDip);
+                if (ft.Width <= tb.ActualWidth)
+                {
+                    best = trimmedFile;
+                    low = mid + 1;
+                }
+                else
+                {
+                    high = mid - 1;
+                }
+            }
+            return best;
+        }
+
+        // error message if no folder selected
+        private void Scan_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(baseDir))
+            {
+                Dispatcher.Invoke(() => txtStatus.Text = $"Select a folder first!");
+                return;
+            }
+
+            Task.Run(() => // dependency check and file scan
+            {
+                Dispatcher.Invoke(() => txtStatus.Text = "Checking dependencies...");
+
+                string[] depFiles = {
+                    "vgmstream-cli.exe","ffmpeg.exe","ffprobe.exe",
+                    "avcodec-vgmstream-59.dll","avformat-vgmstream-59.dll","avutil-vgmstream-57.dll",
+                    "libatrac9.dll","libcelt-0061.dll","libcelt-0110.dll","libg719_decode.dll",
+                    "libmpg123-0.dll","libspeex-1.dll","libvorbis.dll","swresample-vgmstream-4.dll"
+                };
+                var missingDeps = depFiles.Where(f => !File.Exists(Path.Combine(depDir, f))).ToArray();
+                if (missingDeps.Any())
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        txtStatus.Text = "Missing dependencies:\n" + string.Join("\n", missingDeps);
+                        System.Windows.MessageBox.Show("Missing dependencies in the NA2FLAC folder.");
+                    });
+                    return;
+                }
+
+                Dispatcher.Invoke(() => txtStatus.Text = "Scanning files...");
+                string[] supportedExts = {
+                    ".ast",".brstm",".bcstm",".bfstm",".bfwav",".bwav",".swav",".strm",
+                    ".lopus",".idsp",".hps",".dsp",".adx",".mp3",".ogg",".custom"
+                };
+
+                allFiles = supportedExts.SelectMany(ext => Directory.GetFiles(baseDir, "*" + ext, SearchOption.AllDirectories)).ToArray();
+                int totalFiles = allFiles.Length;
+                if (totalFiles == 0)
+                {
+                    Dispatcher.Invoke(() => txtStatus.Text = "No supported files found.");
+                    return;
+                }
+
+                // estimate sizes
+                long totalOriginalBytes = 0;
+                double estimatedFlacBytes = 0;
+                foreach (var file in allFiles)
+                {
+                    long size = new FileInfo(file).Length;
+                    totalOriginalBytes += size;
+                    estimatedFlacBytes += size * EstimateFlacMultiplier(Path.GetExtension(file).ToLower());
+                }
+                string originalSize = FormatSize(totalOriginalBytes);
+                string estimatedSize = FormatSize((long)estimatedFlacBytes);
+                Dispatcher.Invoke(() => txtStatus.Text = $"({totalFiles} total, {originalSize} -> ~{estimatedSize} after conversion)");
+            });
+        }
+
+        // error message if scan not done yet
+        private void Convert_Click(object sender, RoutedEventArgs e)
+        {
+            if (allFiles == null || allFiles.Length == 0)
+            {
+                Dispatcher.Invoke(() => txtStatus.Text = $"No files to convert. Scan first!");
+                return;
+            }
+
+            // decide output root before starting the background task
+            string chosenOutput = !string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text : baseDir;
+            if (string.IsNullOrWhiteSpace(chosenOutput))
+            {
+                System.Windows.MessageBox.Show("Output folder not set (and no input folder selected).");
+                return;
+            }
+
+            // ensure outputDir variable tracks choice
+            outputDir = chosenOutput;
+
+            Task.Run(() =>
+            {
+                int totalFiles = allFiles.Length;
+                int converted = 0, failed = 0, wavKept = 0;
+                string targetRoot = Path.Combine(outputDir, "converted"); // set output to "converted" subfolder
+                Directory.CreateDirectory(targetRoot); // create "converted" folder
+
+                // ------------------------------------------------------------- conversion loop -------------------------------------------------------------
+                for (int i = 0; i < totalFiles; i++)
+                {
+                    var filePath = allFiles[i];
+                    string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath)); // get relative path of file
+                    string destDir = Path.Combine(targetRoot, relPath); // copy relative path to destination to maintain structure
+                    Directory.CreateDirectory(destDir); 
+
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string wavPath = Path.Combine(destDir, fileName + ".wav");
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        string prefix = $"({i + 1}/{totalFiles}) Processing ";
+                        txtStatus.Text = prefix + GetTrimmedPath(filePath, txtStatus, prefix);
+                    });
+
+                    RunProcess(vgm, $"\"{filePath}\" -o \"{wavPath}\"");
+                    bool merged = false;
+
+                    if (fileName.EndsWith("_l"))
+                    {
+                        string rightName = fileName.Substring(0, fileName.Length - 2) + "_r";
+                        string rightPath = Path.Combine(destDir, rightName + ".wav");
+                        if (File.Exists(rightPath))
+                        {
+                            string baseName = fileName.Substring(0, fileName.Length - 2);
+                            string flacPath = Path.Combine(destDir, baseName + ".flac");
+                            RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -i \"{rightPath}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map \"[a]\" -c:a flac \"{flacPath}\"");
+                            if (File.Exists(flacPath))
+                            {
+                                File.Delete(wavPath);
+                                File.Delete(rightPath);
+                                converted++;
+                                merged = true;
+                            }
+                            else wavKept++;
+                        }
+                    }
+
+                    if (!merged)
+                    {
+                        int channels = 0;
+                        var ffprobeOutput = RunProcessCapture(ffprobe, $"-v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 \"{wavPath}\"");
+                        if (int.TryParse(ffprobeOutput.Trim(), out int ch)) channels = ch;
+
+                        if (channels <= 8)
+                        {
+                            string flacPath = Path.Combine(destDir, fileName + ".flac");
+                            RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -c:a flac \"{flacPath}\"");
+                            if (File.Exists(flacPath))
+                            {
+                                File.Delete(wavPath);
+                                converted++;
+                            }
+                            else failed++;
+                        }
+                        else wavKept++;
+                    }
+
+                    Dispatcher.Invoke(() => progressBar.Value = ((double)(i + 1) / totalFiles) * 100);
+                }
+
+                Dispatcher.Invoke(() =>
+                    txtStatus.Text = $"Conversion complete! FLAC: {converted}, WAV kept: {wavKept}, Failed: {failed}");
+            });
+        }
+
+        static double EstimateFlacMultiplier(string extension) // Variations can appear and mess up estimations
+        {
+            if (extension.EndsWith("_32.brstm")) return 4.7; // BRSTM variation, tested with Wii Party
+
+            if (extension.EndsWith("_only32.brstm")) return 1; // Specific case for Mario Kart Wii? will stay at 1
+            // Set to 1 since there's currently not enough testing data to decide any other value:
+            if (extension.EndsWith("32_n.brstm")) return 1; // Specific case for Mario Kart Wii
+            if (extension.EndsWith("32_f.brstm")) return 1; // Specific case for Mario Kart Wii
+
+            if (extension.EndsWith(".ry.32.brstm")) return 1.35; // BRSTM variation, tested with Wii Sports Resort
+            if (extension.EndsWith(".32.c4.brstm")) return 1.3; // BRSTM variation, tested with Wii Sports
+            if (extension == ".brstm") return 5.3; // Tested with Mario Party 8 (seemingly standard BRSTM files since no "32" is in file names)
+            return extension switch
+            {
+                ".bcstm" => 4.5, // Not tested yet
+                ".bfstm" => 4.5, // Tested — Accurate (MK8 Deluxe + 3D World/Bowser's Fury + Odyssey, 620 files total)
+                ".bwav" => 2.3, // Tested — Accurate (ACNH, 860 files total)
+                ".bfwav" => 1.5, // Not tested yet
+                ".dsp" => 1.5, // Not tested yet
+                ".hps" => 2.3, // Not tested yet
+                ".strm" => 0.56, // Tested — Accurate (MySims on Wii, 158 files total) (The only format here that goes down in size, interesting...)
+                ".swav" => 2.3, // Not tested yet
+                ".lopus" => 5.0, // Not tested yet
+                ".ast" => 1.22, // Tested — Accurate (Galaxy 1 + 2 on Wii, 170 files total)
+                ".idsp" => 2.0, // Not tested yet
+                ".adx" => 4.23, // Tested — Accurate (M&S OWG on Wii, 106 files total)
+                ".ogg" or ".mp3" => 2.5, // Tested — Accurate (Minecraft on Switch + Random MP3 files)
+                ".custom" => 1.0,
+                _ => 2.5 // Fallback for unknown formats
+            };
+        }
+
+        private static string FormatSize(long bytes)
+        {
+            double size = bytes;
+            string[] units = { "B", "KB", "MB", "GB", "TB" };
+            int unitIndex = 0;
+            while (size >= 1024 && unitIndex < units.Length - 1)
+            {
+                size /= 1024;
+                unitIndex++;
+            }
+            return $"{size:0.##} {units[unitIndex]}";
+        }
+
+        private static void RunProcess(string exe, string args)
+        {
+            var psi = new ProcessStartInfo(exe, args)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = false,
+                RedirectStandardError = false
+            };
+            using var process = Process.Start(psi);
+            process.WaitForExit();
+        }
+
+        private static string RunProcessCapture(string exe, string args)
+        {
+            var psi = new ProcessStartInfo(exe, args)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            using var process = Process.Start(psi);
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            return output;
+        }
+    }
+}

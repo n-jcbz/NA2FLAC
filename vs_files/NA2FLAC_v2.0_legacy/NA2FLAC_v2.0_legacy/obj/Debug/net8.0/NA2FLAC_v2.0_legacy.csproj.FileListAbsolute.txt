@@ -1,0 +1,14 @@
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_v2.0_legacy.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_v2.0_legacy.AssemblyInfoInputs.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_v2.0_legacy.AssemblyInfo.cs
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_v2.0_legacy.csproj.CoreCompileInputs.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_v2.0_legacy.genruntimeconfig.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\bin\Debug\net8.0\NA2FLAC_2.0_legacy.exe
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\bin\Debug\net8.0\NA2FLAC_2.0_legacy.deps.json
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\bin\Debug\net8.0\NA2FLAC_2.0_legacy.runtimeconfig.json
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\bin\Debug\net8.0\NA2FLAC_2.0_legacy.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\bin\Debug\net8.0\NA2FLAC_2.0_legacy.pdb
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_2.0_legacy.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\refint\NA2FLAC_2.0_legacy.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\NA2FLAC_2.0_legacy.pdb
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_legacy\NA2FLAC_v2.0_legacy\obj\Debug\net8.0\ref\NA2FLAC_2.0_legacy.dll

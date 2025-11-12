@@ -1,0 +1,54 @@
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\Microsoft.VisualBasic.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\Microsoft.VisualBasic.Forms.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Design.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Drawing.Common.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Drawing.Design.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Drawing.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Analyzers.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Design.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Design.Editors.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Primitives.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\WindowsFormsIntegration.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\Microsoft.VisualBasic.Forms.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Drawing.Common.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Analyzers.pdb
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Design.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\System.Windows.Forms.Primitives.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\WindowsFormsIntegration.xml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\cs\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\de\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\es\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\fr\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\it\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\ja\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\ko\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\pl\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\pt-BR\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\ru\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\tr\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\zh-Hans\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\zh-Hant\System.Windows.Forms.Analyzers.resources.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.csproj.AssemblyReference.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\MainWindow.baml
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.AssemblyInfoInputs.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.AssemblyInfo.cs
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.csproj.CoreCompileInputs.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_.F4FDDEA7.Up2Date
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC_v2.0_WPF.genruntimeconfig.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\NA2FLAC v2.0.exe
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\NA2FLAC v2.0.deps.json
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\NA2FLAC v2.0.runtimeconfig.json
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\NA2FLAC v2.0.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\bin\Debug\net8.0-windows\NA2FLAC v2.0.pdb
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC v2.0_Content.g.cs
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC v2.0_MarkupCompile.cache
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC v2.0.g.resources
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC v2.0.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\refint\NA2FLAC v2.0.dll
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\NA2FLAC v2.0.pdb
+C:\Users\NSZ 2\source\repos\NA2FLAC_v2.0_WPF\NA2FLAC_v2.0_WPF\obj\Debug\net8.0-windows\ref\NA2FLAC v2.0.dll
