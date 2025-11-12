@@ -82,6 +82,8 @@ Section "Install"
   File "VGMSTREAM_COPYING.md"
   File "LICENSE.txt"
 
+  SetOutPath "$INSTDIR"
+
   ;--------------------------
   ; Create desktop shortcut
   ;--------------------------
