@@ -2,7 +2,11 @@
 
 - UI tweaks (wasn't planned, I just couldn't help myself)
   - Added **minimize** button to WPF.
-  - Error messages in WPF now show in the bottom status textbox (no system popups).
+  - Error messages in WPF now show in the bottom status textbox (no system popups except if output folder doesn't exist).
+  - Temporarily disabled "Open output" button
+  - Adjusted various margins
+  - Added time spent converting in summary message
+  - Added file types found + count, just like in the legacy build
 
 - BRSTM is a mess — many filename variants change real output size.
   - Added a few special-case suffix rules to handle common patterns.

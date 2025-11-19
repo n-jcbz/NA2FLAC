@@ -199,7 +199,29 @@ namespace NA2FLAC_v2._0_WPF
                     ".lopus",".idsp",".hps",".dsp",".adx",".mp3",".ogg",".custom"
                 };
 
-                allFiles = supportedExts.SelectMany(ext => Directory.GetFiles(baseDir, "*" + ext, SearchOption.AllDirectories)).ToArray();
+                var orderedExts = new[]
+                {
+                    ".ast",".brstm",".bcstm",".bfstm",".bfwav",".bwav",".swav",".strm",
+                    ".lopus",".idsp",".hps",".dsp",".adx",".mp3",".ogg",".custom"
+                };
+
+                Dictionary<string, int> extCounts = new Dictionary<string, int>();
+
+                foreach (var ext in orderedExts)
+                {
+                    int count = Directory.GetFiles(baseDir, "*" + ext, SearchOption.AllDirectories).Length;
+                    if (count > 0)
+                        extCounts[ext] = count;
+                }
+
+                // Build the "xx EXT files found" message
+                string countMsg = string.Join(" · ", extCounts.Select(kvp =>
+                    $"{kvp.Value} {kvp.Key.Trim('.').ToUpper()}"));
+
+                // Now the existing total + size estimate
+                allFiles = supportedExts.SelectMany(ext =>
+                    Directory.GetFiles(baseDir, "*" + ext, SearchOption.AllDirectories)).ToArray();
+
                 int totalFiles = allFiles.Length;
                 if (totalFiles == 0)
                 {
@@ -207,18 +229,24 @@ namespace NA2FLAC_v2._0_WPF
                     return;
                 }
 
-                // estimate sizes
+                // Size estimation
                 long totalOriginalBytes = 0;
                 double estimatedFlacBytes = 0;
+
                 foreach (var file in allFiles)
                 {
                     long size = new FileInfo(file).Length;
                     totalOriginalBytes += size;
                     estimatedFlacBytes += size * EstimateFlacMultiplier(Path.GetExtension(file).ToLower());
                 }
+
                 string originalSize = FormatSize(totalOriginalBytes);
                 string estimatedSize = FormatSize((long)estimatedFlacBytes);
-                Dispatcher.Invoke(() => txtStatus.Text = $"({totalFiles} total, {originalSize} -> ~{estimatedSize} after conversion)");
+
+                // Final merged message
+                string finalMsg = $"{countMsg}, {totalFiles} total  –  {originalSize} -> ~{estimatedSize} after conversion";
+
+                Dispatcher.Invoke(() => txtStatus.Text = finalMsg);
             });
         }
 
@@ -246,6 +274,7 @@ namespace NA2FLAC_v2._0_WPF
             {
                 int totalFiles = allFiles.Length;
                 int converted = 0, failed = 0, wavKept = 0;
+                var startTime = DateTime.Now;
                 string targetRoot = Path.Combine(outputDir, "converted"); // set output to "converted" subfolder
                 Directory.CreateDirectory(targetRoot); // create "converted" folder
 
@@ -255,7 +284,7 @@ namespace NA2FLAC_v2._0_WPF
                     var filePath = allFiles[i];
                     string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath)); // get relative path of file
                     string destDir = Path.Combine(targetRoot, relPath); // copy relative path to destination to maintain structure
-                    Directory.CreateDirectory(destDir); 
+                    Directory.CreateDirectory(destDir);
 
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
                     string wavPath = Path.Combine(destDir, fileName + ".wav");
@@ -312,8 +341,11 @@ namespace NA2FLAC_v2._0_WPF
                     Dispatcher.Invoke(() => progressBar.Value = ((double)(i + 1) / totalFiles) * 100);
                 }
 
+                var endTime = DateTime.Now;
+                var totalTime = endTime - startTime;
+
                 Dispatcher.Invoke(() =>
-                    txtStatus.Text = $"Conversion complete! FLAC: {converted}, WAV kept: {wavKept}, Failed: {failed}");
+                    txtStatus.Text = $"Conversion complete! FLAC: {converted}, WAV kept: {wavKept}, Failed: {failed}, total time spent: {totalTime.Minutes}m {totalTime.Seconds}s");
             });
         }
 

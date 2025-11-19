@@ -77,6 +77,7 @@
             </Setter>
         </Style>
 
+        <!-- Minimize button style -->
         <Style x:Key="MinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -248,20 +249,21 @@
 
             <!-- INPUT FOLDER SELECTION -->
             <TextBox x:Name="txtFolder" Grid.Row="1" Grid.Column="0" IsReadOnly="False" Margin="10,1,5,10"/>
-            <Button Content="Browse…" Grid.Row="1" Grid.Column="1" Click="BrowseFolder_Click" Margin="0,0,10,10"/>
+            <Button Content="Browse Input…" Grid.Row="1" Grid.Column="1" Click="BrowseFolder_Click" Margin="0,0,10,10"/>
 
             <!-- SCAN / CONVERT buttons (centered) -->
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                <Button Content="Scan" Width="200" Margin="-5,0,10,0" Click="Scan_Click" FontSize="14"/>
-                <Button Content="Convert" Width="200" Click="Convert_Click" Height="34" FontSize="14"/>
+                <Button Content="Scan" Width="192.5" Margin="-5,0,10,0" Click="Scan_Click" FontSize="14"/>
+                <Button Content="Convert" Width="192" Click="Convert_Click" Height="34" FontSize="14"/>
             </StackPanel>
 
             <!-- OUTPUT ROW: textbox on left, Browse/Open buttons on right -->
-            <TextBox x:Name="txtOutput" Grid.Row="3" Grid.Column="0" IsReadOnly="False" Margin="10,0,5,10" ToolTip="Leave empty to default to input folder" Text=""/>
-            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top" Margin="0,0,10,10">
-                <Button Content="Browse Output…" Click="BrowseOutput_Click" Margin="0,0,0,6" Width="110"/>
+            <TextBox x:Name="txtOutput" Grid.Row="3" Grid.Column="0" IsReadOnly="False" Margin="10,1,5,10"/>
+            <Button Content="Browse Output…" Grid.Row="3" Grid.Column="3" Click="BrowseOutput_Click" Margin="0,0,10,10"/>
+           <!-- <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top" Margin="0,0,10,10">
+                <Button Content="Browse Output…" Click="BrowseOutput_Click" Margin="0,0,0,5" Width="110"/>
                 <Button Content="Open Output" Click="OpenOutput_Click" Width="110"/>
-            </StackPanel>
+            </StackPanel> -->
 
             <!-- spacer (Grid.Row=4) -->
 
