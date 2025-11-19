@@ -44,4 +44,4 @@
 
 - TL;DR: special-cases are in; BRSTM is the main headache; more sample files per game will tighten multipliers.
 
-### Check [v2.0 release](https://github.com/n-jcbz/NA2FLAC/releases/tag/v2.0), updated versions replaced old builds
+### Check [v2.0 release](https://github.com/n-jcbz/NA2FLAC/releases/tag/v2.0), updated versions probably replaced old builds by now
