@@ -1,4 +1,4 @@
-# NA2FLAC
+# NA2FLAC 
 
 **Nintendo Audio to FLAC Converter**
 
@@ -116,3 +116,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## Contact / Contribute
 
 If you want to help tune estimations, add new formats, or test installer variants, open an issue or a PR in the repository. Pull requests that add format support should include a short test file and expected behavior.
+
+---
+
+![20:9](archive/logo_20.9.jpg) 
