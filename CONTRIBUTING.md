@@ -8,7 +8,7 @@ NA2FLAC is now a small .NET 8 project with two builds: a WPF UI and a legacy con
 ## Quick overview
 - **WPF build (v2.0)** — `NA2FLAC_v2.0_WPF`  
   - Full .NET 8 WPF UI (frameless, rounded window).  
-  - Uses `dependencies` folder for third-party binaries (`vgmstream-cli.exe`, `ffmpeg.exe`, `ffprobe.exe`) and `dependencies\licenses` for license files.
+  - Uses `dependencies` folder for third-party binaries (`vgmstream-cli.exe`, `ffmpeg.exe`, `ffprobe.exe`) and `licenses` for license files.
 - **Legacy build (v2.0 - legacy)** — console C# port (same conversion pipeline, old workflow).
 - Installer scripts live in `devbuilds/*/installer_script.nsi`.
 - If you need the repo tree for context, check the `devbuilds` and `bin` folders (dependencies are included in `devbuilds/*/dependencies`).
@@ -78,7 +78,7 @@ When opening an issue, include:
 ---
 
 ## License & attribution
-By contributing, you agree to license your work under the repo license. Respect third-party licenses — keep license files in `dependencies/licenses`.
+By contributing, you agree to license your work under the repo license. Respect third-party licenses — keep license files in `licenses`.
 
 ---
 
@@ -86,11 +86,3 @@ By contributing, you agree to license your work under the repo license. Respect 
 - If you touch the size estimation, mention the datasets you used (e.g. “Wii Party — 581 BRSTM files”).
 - The WPF status textbox `txtStatus` is used for user-facing messages instead of system popups — aim to keep messages concise and helpful.
 - The app color is `#47A097` — use it for UI accents if you add controls.
-
----
-
-Thanks — keep it small and modular. If you want, I can also:
-- add a short `DEVELOPMENT.md` with build commands and a VS setup checklist, or
-- produce an issue template for multiplier tests (so submitters attach sample filenames and sizes).
-
-Either way, the above CONTRIBUTING.md is ready to drop in.
