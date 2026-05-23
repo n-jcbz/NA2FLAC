@@ -9,6 +9,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 ## Builds
 
+- ### **Android build now available [here](https://github.com/n-jcbz/NA2FLAC-Android)**
 - **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual conversion and to work from any selected input/output folder.
 - **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application, matching the original v1.2.1 behaviour for users who prefer the simple console workflow.
 
