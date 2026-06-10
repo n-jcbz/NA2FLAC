@@ -20,7 +20,6 @@ class NA2FLAC
 
     static string vgm = Path.Combine(depDir, "vgmstream-cli.exe");
     static string ffmpeg = Path.Combine(depDir, "ffmpeg.exe");
-    static string ffprobe = Path.Combine(depDir, "ffprobe.exe");
 
     static void Main()
     {
@@ -39,7 +38,7 @@ class NA2FLAC
         }
 
         string[] depFiles = {
-            "vgmstream-cli.exe","ffmpeg.exe","ffprobe.exe",
+            "vgmstream-cli.exe","ffmpeg.exe",
             "avcodec-vgmstream-59.dll","avformat-vgmstream-59.dll","avutil-vgmstream-57.dll",
             "libatrac9.dll","libcelt-0061.dll","libcelt-0110.dll","libg719_decode.dll",
             "libmpg123-0.dll","libspeex-1.dll","libvorbis.dll","swresample-vgmstream-4.dll"
@@ -132,6 +131,11 @@ class NA2FLAC
         string targetRoot = Path.Combine(baseDir, "converted");
         Directory.CreateDirectory(targetRoot);
 
+        string logPath = Path.Combine(targetRoot, "conversion_log.txt");
+        File.WriteAllText(logPath, $"NA2FLAC Conversion Log - {DateTime.Now}\n");
+        File.AppendAllText(logPath, $"Input folder: {baseDir}\n");
+        File.AppendAllText(logPath, "----------------------------------------------------------\n\n");
+
         int converted = 0, failed = 0, wavKept = 0;
         var startTime = DateTime.Now;
 
@@ -146,8 +150,17 @@ class NA2FLAC
             string wavPath = Path.Combine(destDir, fileName + ".wav");
 
             Console.WriteLine($"({i + 1}/{totalFiles}) Processing {filePath}...");
+            LogToFile(logPath, $"Starting: {Path.GetFileName(filePath)}");
 
             RunProcess(vgm, $"\"{filePath}\" -o \"{wavPath}\"");
+
+            if (!File.Exists(wavPath) || new FileInfo(wavPath).Length == 0)
+            {
+                LogToFile(logPath, $"FAILED: vgmstream produced no WAV for {Path.GetFileName(filePath)}");
+                Console.WriteLine($"Failed to decode {Path.GetFileName(filePath)}");
+                failed++;
+                continue;
+            }
 
             bool merged = false;
             if (fileName.EndsWith("_l"))
@@ -156,51 +169,71 @@ class NA2FLAC
                 string rightPath = Path.Combine(destDir, rightName + ".wav");
                 if (File.Exists(rightPath))
                 {
+                    LogToFile(logPath, $"Found matching _r, merging to stereo: {fileName}");
                     string baseName = fileName.Substring(0, fileName.Length - 2);
                     string flacPath = Path.Combine(destDir, baseName + ".flac");
                     RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -i \"{rightPath}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map \"[a]\" -c:a flac \"{flacPath}\"");
-                    if (File.Exists(flacPath))
+                    if (File.Exists(flacPath) && new FileInfo(flacPath).Length > 0)
                     {
                         File.Delete(wavPath);
                         File.Delete(rightPath);
+                        LogToFile(logPath, $"SUCCESS: Merged stereo FLAC: {baseName}.flac");
                         converted++;
                         merged = true;
                     }
-                    else wavKept++;
+                    else
+                    {
+                        LogToFile(logPath, $"ERROR: Merge failed for {baseName}");
+                        wavKept++;
+                        merged = true;
+                    }
                 }
             }
 
             if (!merged)
             {
-                int channels = 0;
-                var ffprobeOutput = RunProcessCapture(ffprobe, $"-v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 \"{wavPath}\"");
-                if (int.TryParse(ffprobeOutput.Trim(), out int ch)) channels = ch;
+                int channels = GetWavChannels(wavPath);
+                LogToFile(logPath, $"Channel count for {fileName}: {channels}");
 
-                if (channels <= 8)
+                if (channels >= 1 && channels <= 8)
                 {
                     string flacPath = Path.Combine(destDir, fileName + ".flac");
                     RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -c:a flac \"{flacPath}\"");
-                    if (File.Exists(flacPath))
+                    if (File.Exists(flacPath) && new FileInfo(flacPath).Length > 0)
                     {
                         File.Delete(wavPath);
+                        LogToFile(logPath, $"SUCCESS: Converted to {fileName}.flac");
                         converted++;
                     }
                     else
                     {
+                        LogToFile(logPath, $"FAILED: ffmpeg produced no FLAC for {fileName}");
                         Console.WriteLine($"Conversion failed for {wavPath}");
                         failed++;
                     }
                 }
                 else
                 {
+                    LogToFile(logPath, $"Skipping FLAC (channels: {channels}), keeping WAV: {fileName}");
                     Console.WriteLine($"Keeping {wavPath} because it has {channels} channels");
                     wavKept++;
                 }
             }
         }
 
+        var totalTime = DateTime.Now - startTime;
+
+        // Write summary to log
+        LogToFile(logPath, "\n----------------------------------------------------------");
+        LogToFile(logPath, "CONVERSION SUMMARY:");
+        LogToFile(logPath, $"Total: {totalFiles}");
+        LogToFile(logPath, $"Converted to FLAC: {converted}");
+        LogToFile(logPath, $"Kept as WAV: {wavKept}");
+        LogToFile(logPath, $"Failed: {failed}");
+        LogToFile(logPath, $"Elapsed: {totalTime.Minutes}m {totalTime.Seconds}s");
+        LogToFile(logPath, "----------------------------------------------------------");
+
         var endTime = DateTime.Now;
-        var totalTime = endTime - startTime;
 
         Console.WriteLine("\n=======================================");
         Console.WriteLine("Conversion Summary");
@@ -240,19 +273,28 @@ class NA2FLAC
         process.WaitForExit();
     }
 
-    static string RunProcessCapture(string exe, string args)
+    static void LogToFile(string logPath, string message)
     {
-        var psi = new ProcessStartInfo(exe, args)
+        try
         {
-            CreateNoWindow = true,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-        using var process = Process.Start(psi);
-        string output = process.StandardOutput.ReadToEnd();
-        process.WaitForExit();
-        return output;
+            string time = DateTime.Now.ToString("HH:mm:ss");
+            File.AppendAllText(logPath, $"[{time}] {message}\n");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Log write failed: {ex.Message}");
+        }
+    }
+
+    static int GetWavChannels(string wavPath)
+    {
+        try
+        {
+            using var fs = new FileStream(wavPath, FileMode.Open, FileAccess.Read);
+            fs.Seek(22, SeekOrigin.Begin);
+            return fs.ReadByte() | (fs.ReadByte() << 8);
+        }
+        catch { return 0; }
     }
 
     static string FormatSize(long bytes)

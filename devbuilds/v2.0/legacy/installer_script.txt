@@ -36,7 +36,6 @@ Section "Extract Files"
   ; Main executables
   File "vgmstream-cli.exe"
   File "ffmpeg.exe"
-  File "ffprobe.exe"
   File "NA2FLAC_2.0_legacy.exe"
 
   ; DLLs and dependencies
