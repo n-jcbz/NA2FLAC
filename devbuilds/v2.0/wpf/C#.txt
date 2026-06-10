@@ -381,7 +381,7 @@ namespace NA2FLAC_v2._0_WPF
                     Dispatcher.Invoke(() =>
                         txtStatus.Text = $"Converting using {usableThreads} of {cpuThreads} threads...");
 
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1500);
 
                     var startTime = DateTime.Now;
 
