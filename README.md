@@ -10,7 +10,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## Builds
   
 - **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual conversion and to work from any selected input/output folder.
-- **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application, matching the original v1.2.1 behaviour for users who prefer the simple console workflow.
+- **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application with the latest updates, for users who prefer the simple console workflow.
 
 - **Android build now available [here](https://github.com/n-jcbz/NA2FLAC-Android)**
 
@@ -55,7 +55,7 @@ It guides the user through each step with simple prompts (console) or a small GU
   - Installer places the app files, `dependencies`, and `licenses` in the chosen install location.
   - Installer of the legacy build creates the `NA2FLAC` folder in the same directory it is being run from.
  
-- **Multithreading**
+- **Multithreading (WPF only)**
   - Adaptive multithreading allows for much faster conversions of up to 8x faster, depending on the amount of threads used¹ and storage speeds.
  
 - **Conversion logs**
@@ -79,7 +79,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## How It Works (Legacy / Console)
 
 1. Place the installer in the folder containing your audio files (or any folder above it)
-2. Run `NA2FLAC_2.0_legacy.exe`
+2. Run `NA2FLAC_v2.0_legacy.exe`
 3. Confirm the prompts to scan and convert
 4. Converted files are written into a `converted` folder inside the folder where you ran the exe (preserving structure)
 
