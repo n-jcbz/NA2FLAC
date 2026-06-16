@@ -7,7 +7,7 @@
 
 ; Installer properties
 Name "NA2FLAC v2.0 Installer (Legacy)"
-OutFile "NA2FLAC_2.0_legacy_Installer.exe"
+OutFile "NA2FLAC_v2.0_legacy_Installer.exe"
 InstallDir "$EXEDIR"   ; Extract to the folder where installer is run
 RequestExecutionLevel user
 
@@ -36,7 +36,6 @@ Section "Extract Files"
   ; Main executables
   File "vgmstream-cli.exe"
   File "ffmpeg.exe"
-  File "ffprobe.exe"
   File "NA2FLAC_2.0_legacy.exe"
 
   ; DLLs and dependencies

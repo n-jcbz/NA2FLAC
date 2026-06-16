@@ -1,4 +1,4 @@
-# NA2FLAC 
+# NA2FLAC
 
 **Nintendo Audio to FLAC Converter**
 
@@ -8,11 +8,9 @@ It guides the user through each step with simple prompts (console) or a small GU
 ---
 
 ## Builds
-  
-- **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual conversion and to work from any selected input/output folder.
-- **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application with the latest updates, for users who prefer the simple console workflow.
 
-- **Android build now available [here](https://github.com/n-jcbz/NA2FLAC-Android)**
+- **WPF build (v2.0)** — modern .NET 8 WPF UI with folder selection, output folder option, progress bar, and status text. Designed for easy, visual conversion and to work from any selected input/output folder.
+- **Legacy build (v2.0 Legacy)** — original batch script simply ported to C# as a console application, matching the original v1.2.1 behaviour for users who prefer the simple console workflow.
 
 ---
 
@@ -54,14 +52,6 @@ It guides the user through each step with simple prompts (console) or a small GU
   - NSIS-based installer (creates a desktop shortcut, Start Menu entry, and an Uninstaller in the `NA2FLAC` folder).
   - Installer places the app files, `dependencies`, and `licenses` in the chosen install location.
   - Installer of the legacy build creates the `NA2FLAC` folder in the same directory it is being run from.
- 
-- **Multithreading (WPF only)**
-  - Adaptive multithreading allows for much faster conversions of up to 8x faster, depending on the amount of threads used¹ and storage speeds.
- 
-- **Conversion logs**
-  - A log file will be created in the `converted` folder and shows the full process of the conversion.
- 
-###### ¹ High thread usage will result in higher temperatures.
 
 ---
 
@@ -79,7 +69,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## How It Works (Legacy / Console)
 
 1. Place the installer in the folder containing your audio files (or any folder above it)
-2. Run `NA2FLAC_v2.0_legacy.exe`
+2. Run `NA2FLAC_2.0_legacy.exe`
 3. Confirm the prompts to scan and convert
 4. Converted files are written into a `converted` folder inside the folder where you ran the exe (preserving structure)
 
@@ -88,7 +78,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## Requirements
 
 - Windows 10 or later  
-- **WPF build:** requires .NET 8 runtime. If you do not have it installed, the program will automatically provide a link.
+- **WPF build:** is self-contained and does not require you to install the .NET 8 runtime.
 - No separate install needed for ffmpeg/ffprobe/vgmstream — they are bundled in `dependencies` by the installer.
 
 ---
@@ -97,13 +87,13 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 - **NA2FLAC** — MIT License (see `NA2FLAC/licenses/LICENSE.txt`)  
 - **FFmpeg / FFprobe** — GNU GPL v3 (see `NA2FLAC/licenses/FFMPEG_COPYING.GPLv3.md` and `FFMPEG_LICENSE.md`)  
-  Visit [https://ffmpeg.org](https://ffmpeg.org)  
+  Visit https://ffmpeg.org  
 - **VGMStream** — MIT License (see `NA2FLAC/licenses/VGMSTREAM_COPYING.md`)  
-  Visit [https://vgmstream.org](https://vgmstream.org/)
+  Visit https://vgmstream.org  
 - **BatToExe Portable** — MIT License (see `NA2FLAC/licenses/BatToExePortable_LICENSE.md`)  
-  Visit [https://github.com/Makazzz/BatToExePortable](https://github.com/Makazzz/BatToExePortable)  
+  Visit https://github.com/Makazzz/BatToExePortable  
 - **NSIS (Nullsoft Scriptable Install System)** — zlib/libpng License (see `NA2FLAC/licenses/NSIS_COPYING.md`)  
-  Visit [https://nsis.sourceforge.io](https://nsis.sourceforge.io)
+  Visit https://nsis.sourceforge.io
 
 ---
 
@@ -126,7 +116,3 @@ It guides the user through each step with simple prompts (console) or a small GU
 ## Contact / Contribute
 
 If you want to help tune estimations, add new formats, or test installer variants, open an issue or a PR in the repository. Pull requests that add format support should include a short test file and expected behavior.
-
----
-
-![20:9](archive/logo_20.9.jpg) 

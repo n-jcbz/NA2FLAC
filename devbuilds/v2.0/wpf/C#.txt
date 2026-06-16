@@ -1,16 +1,17 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Globalization;
-using Path = System.IO.Path;
 using System.Windows.Forms;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Path = System.IO.Path;
 
-// BUILD TYPE: WPF — STABLE — IN DEVELOPMENT — Check EstimateFlacMultiplier @ line 320
+// BUILD TYPE: WPF — STABLE
 
 // ANYTHING REFERRED TO AS "CUSTOM" AND "custom" ARE PLACEHOLDERS FOR FUTURE FORMAT SUPPORT.
 // YOU CAN REPLACE THEM WITH ANY PROPRIETARY AUDIO FORMAT TO TEST COMPATIBILITY.
@@ -26,9 +27,35 @@ namespace NA2FLAC_v2._0_WPF
         string licenseDir = "";
         string vgm = "";
         string ffmpeg = "";
-        string ffprobe = "";
         string[] allFiles;
         string outputDir = "";
+        string openOutputTarget = "";
+        string logPath = "";
+
+        private void LogToFile(string message)
+        {
+            if (string.IsNullOrEmpty(logPath)) return;
+            try
+            {
+                string time = DateTime.Now.ToString("HH:mm:ss");
+                lock (logPath)
+                {
+                    File.AppendAllText(logPath, $"[{time}] {message}\n");
+                }
+            }
+            catch { }
+        }
+
+        private static int GetWavChannels(string wavPath)
+        {
+            try
+            {
+                using var fs = new FileStream(wavPath, FileMode.Open, FileAccess.Read);
+                fs.Seek(22, SeekOrigin.Begin);
+                return fs.ReadByte() | (fs.ReadByte() << 8);
+            }
+            catch { return 0; }
+        }
 
         public MainWindow()
         {
@@ -38,7 +65,7 @@ namespace NA2FLAC_v2._0_WPF
             licenseDir = Path.Combine(exeDir, "licenses");    // licenses
             vgm = Path.Combine(depDir, "vgmstream-cli.exe");
             ffmpeg = Path.Combine(depDir, "ffmpeg.exe");
-            ffprobe = Path.Combine(depDir, "ffprobe.exe");
+            this.StateChanged += Window_StateChanged;
         }
 
         private void BrowseFolder_Click(object sender, RoutedEventArgs e)
@@ -76,8 +103,9 @@ namespace NA2FLAC_v2._0_WPF
         // open output folder in Explorer
         private void OpenOutput_Click(object sender, RoutedEventArgs e)
         {
-            string toOpen = !string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text :
-                            (!string.IsNullOrWhiteSpace(baseDir) ? baseDir : AppDomain.CurrentDomain.BaseDirectory);
+            string toOpen = !string.IsNullOrWhiteSpace(openOutputTarget) ? openOutputTarget :
+                            (!string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text :
+                            (!string.IsNullOrWhiteSpace(baseDir) ? baseDir : AppDomain.CurrentDomain.BaseDirectory));
 
             if (!Directory.Exists(toOpen))
             {
@@ -103,7 +131,49 @@ namespace NA2FLAC_v2._0_WPF
 
         private void Minimize_Click(object sender, RoutedEventArgs e)
         {
+            // 1. Grab the native Win32 window handler structure
+            var hwnd = new WindowInteropHelper(this).Handle;
+
+            if (hwnd != IntPtr.Zero)
+            {
+                // 2. Temporarily turn on standard window features so DWM can see the minimize path
+                int style = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE);
+                NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE, style | NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME);
+            }
+
+            // 3. Trigger the standard minimize command — Windows will now slide it smoothly to the taskbar!
             this.WindowState = WindowState.Minimized;
+        }
+
+        // 4. Hook onto the StateChanged event to catch when the app wakes up or restores
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState != WindowState.Minimized)
+            {
+                var hwnd = new WindowInteropHelper(this).Handle;
+                if (hwnd != IntPtr.Zero)
+                {
+                    // Strip the standard borders away cleanly immediately upon wake-up
+                    int style = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE);
+                    style &= ~NativeMethods.WS_CAPTION;
+                    style &= ~NativeMethods.WS_THICKFRAME;
+                    NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE, style);
+                }
+            }
+        }
+
+        // Small helper class to map the core Win32 User32 APIs safely
+        internal static class NativeMethods
+        {
+            public const int GWL_STYLE = -16;
+            public const int WS_CAPTION = 0x00C00000;
+            public const int WS_THICKFRAME = 0x00040000;
+
+            [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+            public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         }
 
         // trims a file path to fit within a TextBlock's width, adding ellipses as needed
@@ -177,7 +247,7 @@ namespace NA2FLAC_v2._0_WPF
                 Dispatcher.Invoke(() => txtStatus.Text = "Checking dependencies...");
 
                 string[] depFiles = {
-                    "vgmstream-cli.exe","ffmpeg.exe","ffprobe.exe",
+                    "vgmstream-cli.exe","ffmpeg.exe",
                     "avcodec-vgmstream-59.dll","avformat-vgmstream-59.dll","avutil-vgmstream-57.dll",
                     "libatrac9.dll","libcelt-0061.dll","libcelt-0110.dll","libg719_decode.dll",
                     "libmpg123-0.dll","libspeex-1.dll","libvorbis.dll","swresample-vgmstream-4.dll"
@@ -250,102 +320,202 @@ namespace NA2FLAC_v2._0_WPF
             });
         }
 
-        // error message if scan not done yet
+        private bool isConverting = false;
+
         private void Convert_Click(object sender, RoutedEventArgs e)
         {
             if (allFiles == null || allFiles.Length == 0)
             {
-                Dispatcher.Invoke(() => txtStatus.Text = $"No files to convert. Scan first!");
+                Dispatcher.Invoke(() => txtStatus.Text = "No files to convert. Scan first!");
                 return;
             }
 
-            // decide output root before starting the background task
+            if (isConverting)
+                return;
+
             string chosenOutput = !string.IsNullOrWhiteSpace(txtOutput.Text) ? txtOutput.Text : baseDir;
             if (string.IsNullOrWhiteSpace(chosenOutput))
             {
-                System.Windows.MessageBox.Show("Output folder not set (and no input folder selected).");
+                System.Windows.MessageBox.Show("Output folder not set.");
                 return;
             }
 
-            // ensure outputDir variable tracks choice
             outputDir = chosenOutput;
+            isConverting = true;
+
+            // Disable button + reset UI
+            Dispatcher.Invoke(() =>
+            {
+                btnConvert.IsEnabled = false;
+                progressBar.Value = 0;
+            });
 
             Task.Run(() =>
             {
                 int totalFiles = allFiles.Length;
                 int converted = 0, failed = 0, wavKept = 0;
-                var startTime = DateTime.Now;
-                string targetRoot = Path.Combine(outputDir, "converted"); // set output to "converted" subfolder
-                Directory.CreateDirectory(targetRoot); // create "converted" folder
+                int completedCount = 0;
 
-                // ------------------------------------------------------------- conversion loop -------------------------------------------------------------
-                for (int i = 0; i < totalFiles; i++)
+                string targetRoot = Path.Combine(outputDir, "converted");
+                Directory.CreateDirectory(targetRoot);
+
+                // Switch Open Output to point at converted folder as soon as Convert is tapped
+                Dispatcher.Invoke(() => openOutputTarget = targetRoot);
+
+                // Set up log file
+                logPath = Path.Combine(targetRoot, "conversion_log.txt");
+                File.WriteAllText(logPath, $"NA2FLAC Conversion Log - {DateTime.Now}\n");
+                File.AppendAllText(logPath, $"Input folder: {baseDir}\n");
+                File.AppendAllText(logPath, $"Output folder: {targetRoot}\n");
+                File.AppendAllText(logPath, "----------------------------------------------------------\n\n");
+
+                // Adaptive threading
+                int cpuThreads = Environment.ProcessorCount;
+                int usableThreads = cpuThreads switch
                 {
-                    var filePath = allFiles[i];
-                    string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath)); // get relative path of file
-                    string destDir = Path.Combine(targetRoot, relPath); // copy relative path to destination to maintain structure
-                    Directory.CreateDirectory(destDir);
+                    <= 4 => cpuThreads - 2,
+                    <= 6 => cpuThreads - 2,
+                    <= 8 => cpuThreads - 2,
+                    <= 12 => (int)(cpuThreads * 0.833333334),
+                    <= 16 => (int)(cpuThreads * 0.875),
+                    _ => (int)(cpuThreads * 0.65)
+                };
+                usableThreads = Math.Max(2, usableThreads);
 
-                    string fileName = Path.GetFileNameWithoutExtension(filePath);
-                    string wavPath = Path.Combine(destDir, fileName + ".wav");
+                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = usableThreads };
+                object stateLock = new object();
+
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                        txtStatus.Text = $"Converting using {usableThreads} of {cpuThreads} threads...");
+
+                    Thread.Sleep(1500);
+
+                    var startTime = DateTime.Now;
+
+                    Parallel.ForEach(allFiles, parallelOptions, filePath =>
+                    {
+                        string relPath = Path.GetRelativePath(baseDir, Path.GetDirectoryName(filePath));
+                        string destDir = Path.Combine(targetRoot, relPath);
+                        Directory.CreateDirectory(destDir);
+
+                        string fileName = Path.GetFileNameWithoutExtension(filePath);
+                        string wavPath = Path.Combine(destDir, fileName + ".wav");
+
+                        bool localMerged = false;
+                        int localConverted = 0, localWavKept = 0, localFailed = 0;
+
+                        LogToFile($"Starting: {Path.GetFileName(filePath)}");
+                        RunProcess(vgm, $"\"{filePath}\" -o \"{wavPath}\"");
+
+                        if (!File.Exists(wavPath) || new FileInfo(wavPath).Length == 0)
+                        {
+                            LogToFile($"FAILED: vgmstream produced no WAV for {Path.GetFileName(filePath)}");
+                            localFailed++;
+                            goto Done;
+                        }
+
+                        if (fileName.EndsWith("_l"))
+                        {
+                            string rightName = fileName.Substring(0, fileName.Length - 2) + "_r";
+                            string rightPath = Path.Combine(destDir, rightName + ".wav");
+
+                            if (File.Exists(rightPath))
+                            {
+                                LogToFile($"Found matching _r, merging to stereo: {fileName}");
+                                string baseName = fileName.Substring(0, fileName.Length - 2);
+                                string flacPath = Path.Combine(destDir, baseName + ".flac");
+
+                                RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -i \"{rightPath}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map \"[a]\" -c:a flac \"{flacPath}\"");
+
+                                if (File.Exists(flacPath) && new FileInfo(flacPath).Length > 0)
+                                {
+                                    File.Delete(wavPath);
+                                    File.Delete(rightPath);
+                                    LogToFile($"SUCCESS: Merged stereo FLAC: {baseName}.flac");
+                                    localConverted++;
+                                    localMerged = true;
+                                }
+                                else
+                                {
+                                    LogToFile($"ERROR: Merge failed for {baseName}");
+                                    localWavKept++;
+                                    localMerged = true;
+                                }
+                            }
+                        }
+
+                        if (!localMerged)
+                        {
+                            int channels = GetWavChannels(wavPath);
+                            LogToFile($"Channel count for {fileName}: {channels}");
+
+                            if (channels >= 1 && channels <= 8)
+                            {
+                                string flacPath = Path.Combine(destDir, fileName + ".flac");
+                                RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -c:a flac \"{flacPath}\"");
+
+                                if (File.Exists(flacPath) && new FileInfo(flacPath).Length > 0)
+                                {
+                                    File.Delete(wavPath);
+                                    LogToFile($"SUCCESS: Converted to {fileName}.flac");
+                                    localConverted++;
+                                }
+                                else
+                                {
+                                    LogToFile($"FAILED: ffmpeg produced no FLAC for {fileName}, keeping WAV");
+                                    localFailed++;
+                                }
+                            }
+                            else
+                            {
+                                LogToFile($"Skipping FLAC (channels: {channels}), keeping WAV: {fileName}");
+                                localWavKept++;
+                            }
+                        }
+
+                    Done:
+                        int currentProgress = Interlocked.Increment(ref completedCount);
+
+                        lock (stateLock)
+                        {
+                            converted += localConverted;
+                            failed += localFailed;
+                            wavKept += localWavKept;
+                        }
+
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            string prefix = $"({currentProgress}/{totalFiles}) ";
+                            txtStatus.Text = prefix + GetTrimmedPath(filePath, txtStatus, prefix);
+                            progressBar.Value = ((double)currentProgress / totalFiles) * 100;
+                        });
+                    });
+
+                    var totalTime = DateTime.Now - startTime;
+
+                    // Write summary to log
+                    LogToFile("\n----------------------------------------------------------");
+                    LogToFile($"CONVERSION SUMMARY:");
+                    LogToFile($"Total: {totalFiles}");
+                    LogToFile($"Converted to FLAC: {converted}");
+                    LogToFile($"Kept as WAV: {wavKept}");
+                    LogToFile($"Failed: {failed}");
+                    LogToFile($"Elapsed: {totalTime.Minutes}m {totalTime.Seconds}s");
+                    LogToFile("----------------------------------------------------------");
 
                     Dispatcher.Invoke(() =>
                     {
-                        string prefix = $"({i + 1}/{totalFiles}) Processing ";
-                        txtStatus.Text = prefix + GetTrimmedPath(filePath, txtStatus, prefix);
+                        txtStatus.Text = $"Conversion complete! FLAC: {converted}, WAV kept: {wavKept}, Failed: {failed}, total time: {totalTime.Minutes}m {totalTime.Seconds}s";
+                        progressBar.Value = 100;
                     });
-
-                    RunProcess(vgm, $"\"{filePath}\" -o \"{wavPath}\"");
-                    bool merged = false;
-
-                    if (fileName.EndsWith("_l"))
-                    {
-                        string rightName = fileName.Substring(0, fileName.Length - 2) + "_r";
-                        string rightPath = Path.Combine(destDir, rightName + ".wav");
-                        if (File.Exists(rightPath))
-                        {
-                            string baseName = fileName.Substring(0, fileName.Length - 2);
-                            string flacPath = Path.Combine(destDir, baseName + ".flac");
-                            RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -i \"{rightPath}\" -filter_complex \"[0:a][1:a]amerge=inputs=2[a]\" -map \"[a]\" -c:a flac \"{flacPath}\"");
-                            if (File.Exists(flacPath))
-                            {
-                                File.Delete(wavPath);
-                                File.Delete(rightPath);
-                                converted++;
-                                merged = true;
-                            }
-                            else wavKept++;
-                        }
-                    }
-
-                    if (!merged)
-                    {
-                        int channels = 0;
-                        var ffprobeOutput = RunProcessCapture(ffprobe, $"-v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 \"{wavPath}\"");
-                        if (int.TryParse(ffprobeOutput.Trim(), out int ch)) channels = ch;
-
-                        if (channels <= 8)
-                        {
-                            string flacPath = Path.Combine(destDir, fileName + ".flac");
-                            RunProcess(ffmpeg, $"-y -i \"{wavPath}\" -c:a flac \"{flacPath}\"");
-                            if (File.Exists(flacPath))
-                            {
-                                File.Delete(wavPath);
-                                converted++;
-                            }
-                            else failed++;
-                        }
-                        else wavKept++;
-                    }
-
-                    Dispatcher.Invoke(() => progressBar.Value = ((double)(i + 1) / totalFiles) * 100);
                 }
-
-                var endTime = DateTime.Now;
-                var totalTime = endTime - startTime;
-
-                Dispatcher.Invoke(() =>
-                    txtStatus.Text = $"Conversion complete! FLAC: {converted}, WAV kept: {wavKept}, Failed: {failed}, total time spent: {totalTime.Minutes}m {totalTime.Seconds}s");
+                finally
+                {
+                    isConverting = false;
+                    Dispatcher.Invoke(() => btnConvert.IsEnabled = true);
+                }
             });
         }
 
