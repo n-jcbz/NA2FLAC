@@ -47,7 +47,7 @@ It guides the user through each step with simple prompts (console) or a small GU
   - WAVs are kept if conversion fails or if the file has too many channels.
 
 - **Tidied dependency layout**
-  - App files live in the install folder; third-party binaries (ffmpeg, vgmstream, ffprobe and their DLLs) are placed in a `dependencies` folder.
+  - App files live in the install folder; third-party binaries (ffmpeg, vgmstream its DLLs) are placed in a `dependencies` folder.
   - Licenses are grouped in `NA2FLAC/licenses` for clarity.
 
 - **Installer**
@@ -89,7 +89,7 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 - Windows 10 or later  
 - **WPF build:** requires .NET 8 runtime. If you do not have it installed, the program will automatically provide a link.
-- No separate install needed for ffmpeg/ffprobe/vgmstream — they are bundled in `dependencies` by the installer.
+- No separate install needed for ffmpeg/vgmstream — they are bundled in `dependencies` by the installer.
 
 ---
 
@@ -109,11 +109,13 @@ It guides the user through each step with simple prompts (console) or a small GU
 
 ## Credits
 
-- FFmpeg and FFprobe by the FFmpeg developers  
+- FFmpeg and FFprobe² by the FFmpeg developers  
 - VGMStream by the VGMStream team  
 - BatToExe Portable by Makazzz (used for pre-v2.0 builds)  
 - NSIS Installer System by the NSIS developers  
 - NA2FLAC by n.jcbz
+
+###### ² FFprobe is used in pre-v2.0 builds
 
 ---
 
